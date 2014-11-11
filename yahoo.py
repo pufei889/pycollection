@@ -5,7 +5,7 @@ class Yahoo(Collection):
         
         def filter(self,ttag="h2",ctag="p"):
                 
-                if len(self.content) <= 0 : return
+                if not self.content : return
                 
                 pas = re.compile(r"<div class=\"res\">([\s\S]*?)<\/div><\/li>",re.I|re.M)
                 h3 = re.compile(r"<h3>([\s\S]*?)<\/h3>",re.I|re.M)
