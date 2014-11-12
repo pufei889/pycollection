@@ -3,7 +3,8 @@ import urllib2,urllib
 
 def POST(url,data):
     formdata=urllib.urlencode(data)
-    f = urllib2.urlopen(url, formdata,timeout=10)
+    req = urllib2.Request(url,headers={'User-Agent' : "Magic Browser"}) 
+    f = urllib2.urlopen(req,formdata,timeout=10)
     content = f.read()
     return content
 
