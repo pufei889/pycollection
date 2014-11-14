@@ -71,7 +71,7 @@ while True:
         post_content= YaCo.filter()
         if ( post_content and len(post_content) > 10 ):
                     try:
-                        result=post.POST("http://www.raymondmill.com/es/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
+                        result=post.POST("http://www.raymondmill.com/fr/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
                     except:
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
@@ -84,4 +84,5 @@ while True:
         break
     
 #close
+print "Task Complete"
 keyfile.close()
