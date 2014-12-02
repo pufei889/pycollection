@@ -65,14 +65,13 @@ if ( "-d" in arguments ):
     os.umask(0)
     os.chdir("/")
     try:
-        logfd = open(logfile,'a')
+        logfd = open(logfile,'a+')
         os.dup2(logfd.fileno(),0)
         os.dup2(logfd.fileno(),1)
         os.dup2(logfd.fileno(),2)
         os.close(logfd.fileno())
     except:
         print "Can not Access %s"%logfile
-
         
 """main"""
 while True:
