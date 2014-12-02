@@ -22,7 +22,7 @@ class Ask(Collection):
                 if ( len(artice) < 5 or artice == "None"):
                         return False
                 else:
-                        return artice
+                        return artice.replace('\n','').encode('utf-8')
                         
 if __name__ == "__main__":
       print "This is not a Direct execut program "

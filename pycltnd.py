@@ -23,7 +23,7 @@ if ( "-u" in arguments ):
     posturl = arguments[u]
 else:
     print "Must Input a Target URL -t url"
-    sys.exit(0)
+    sys.exit()
 
 if ( "-k" in arguments ):
     k = arguments.index("-k")+1
@@ -59,19 +59,17 @@ if ( "-d" in arguments ):
         pid = os.fork()
     except:
         print "Your System are not support to run as deamon"
+        sys.exit()
     
     if pid:sys.exit()
     os.setsid()
     os.umask(0)
     os.chdir("/")
-    try:
-        logfd = open(logfile,'a+')
-        os.dup2(logfd.fileno(),0)
-        os.dup2(logfd.fileno(),1)
-        os.dup2(logfd.fileno(),2)
-        os.close(logfd.fileno())
-    except:
-        print "Can not Access %s"%logfile
+    logfd = open(logfile,'a+')
+    os.dup2(logfd.fileno(),0)
+    os.dup2(logfd.fileno(),1)
+    os.dup2(logfd.fileno(),2)
+    os.close(logfd.fileno())
         
 """main"""
 while True:
@@ -84,11 +82,12 @@ while True:
                 page = str(i+1)
                 asurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 AsCo=ask.Ask(asurl,'http://www.ask.com/')
-                post_content = post_content + AsCo.filter().encode('utf-8')
+                post_content = post_content + AsCo.filter()
         else:
             geturl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
-            YaCo=yahoo.Yahoo(geturl)
-            post_content = YaCo.filter().encode('utf-8')
+            YaCo=yahoo.Yahoo(geturl,'https://www.yahoo.com/')
+            post_content = YaCo.filter()
+
         if (len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
@@ -103,6 +102,8 @@ while True:
         time.sleep(interval)
     except KeyboardInterrupt,e:
         break
+    except:
+        pass
     
 #close
 print "Task Complete"
