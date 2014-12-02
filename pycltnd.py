@@ -62,14 +62,14 @@ if ( "-d" in arguments ):
         sys.exit()
     
     if pid:sys.exit()
-    os.setsid()
-    os.umask(0)
-    os.chdir("/")
     logfd = open(logfile,'a+')
     os.dup2(logfd.fileno(),0)
     os.dup2(logfd.fileno(),1)
     os.dup2(logfd.fileno(),2)
     os.close(logfd.fileno())
+    os.setsid()
+    os.umask(0)
+    os.chdir("/")
         
 """main"""
 while True:
