@@ -85,13 +85,11 @@ while True:
                 page = str(i+1)
                 asurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 AsCo=ask.Ask(asurl,'http://www.ask.com/')
-                post_content = post_content + AsCo.filter()
+                post_content = post_content + AsCo.filter().encode('utf-8')
         else:
             geturl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
             YaCo=yahoo.Yahoo(geturl)
-            post_content = YaCo.filter()
-
-        print post_content.decode('ascii', 'ignore').encode('utf-8')
+            post_content = YaCo.filter().encode('utf-8')
         if (len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
