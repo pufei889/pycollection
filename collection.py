@@ -10,7 +10,7 @@ class Collection:
         self.__ua=ua
         self.__referer=referer
         if self.__get_content(url):
-            self.content=self.__get_content(url)
+            self.content=self.__get_content(url).strip()
         else:
             self.content=""
 

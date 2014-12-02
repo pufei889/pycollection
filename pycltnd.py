@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-
-import os,sys,time,post,yahoo,urllib
+import os,sys,time,post,yahoo,ask,urllib
 
 """
 arguments:
@@ -12,25 +12,22 @@ arguments:
 -d:    For linux with -d , you can run this progarm as deamon
 """
 
-logfile   = open("./pycltnd.log","a+")
+logfile   = "./pycltnd.log"
+keyfile = "./key.txt"
+
 arguments = sys.argv
-keyfile= open("./key.txt","r")
 count=20
 interval = 10
-"""
 if ( "-u" in arguments ):
     u = arguments.index("-u")+1
-    url = arguments[t]
+    posturl = arguments[u]
 else:
     print "Must Input a Target URL -t url"
-    sys.exit()
-"""
+    sys.exit(0)
+
 if ( "-k" in arguments ):
     k = arguments.index("-k")+1
-    filename = arguments[k]
-    if os.path.exists(filename):
-        keyfile.close()
-        keyfile = open(filename,"r")
+    keyfile = arguments[k]
 
 if ( "-t" in arguments ):
     t = arguments.index("-t")+1
@@ -46,6 +43,16 @@ if ( "-c" in arguments ):
     except:
         count=20
 
+if ("getyahoo" in arguments):
+    getyahoo = True
+else:
+    getyahoo = False
+
+try:
+    keyhd=open(keyfile,'r')
+except:
+    print "Can not open %s"%keyfile
+
 #run as deamon 
 if ( "-d" in arguments ):
     try:
@@ -57,21 +64,38 @@ if ( "-d" in arguments ):
     os.setsid()
     os.umask(0)
     os.chdir("/")
-    os.dup2(logfile.fileno(),0)
-    os.dup2(logfile.fileno(),1)
-    os.dup2(logfile.fileno(),2)
-    os.close(logfile.fileno())
+    try:
+        logfd = open(logfile,'a')
+        os.dup2(logfd.fileno(),0)
+        os.dup2(logfd.fileno(),1)
+        os.dup2(logfd.fileno(),2)
+        os.close(logfd.fileno())
+    except:
+        print "Can not Access %s"%logfile
+
+        
 """main"""
 while True:
     try:
-        key = keyfile.readline().strip()
+        key = keyhd.readline().strip()
         if len(key) == 0: break
-        yahoourl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
-        YaCo=yahoo.Yahoo(yahoourl)
-        post_content= YaCo.filter()
-        if ( post_content and len(post_content) > 10 ):
+        post_content = ''
+        if not getyahoo:
+            for i in range(count/10):
+                page = str(i+1)
+                asurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
+                AsCo=ask.Ask(asurl,'http://www.ask.com/')
+                post_content = post_content + AsCo.filter()
+        else:
+            geturl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
+            YaCo=yahoo.Yahoo(geturl)
+            post_content = YaCo.filter()
+
+        print post_content.decode('ascii', 'ignore').encode('utf-8')
+        if (len(post_content) > 10 ):
                     try:
-                        result=post.POST("http://www.raymondmill.com/fr/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
+                        pl="%s?action=save&secret=yht123hito"%posturl
+                        result=post.POST(pl,{"post_title":key,"post_content":post_content})
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
                     except:
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
@@ -85,4 +109,4 @@ while True:
     
 #close
 print "Task Complete"
-keyfile.close()
+keyhd.close()
