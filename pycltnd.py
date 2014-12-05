@@ -52,6 +52,7 @@ try:
     keyhd=open(keyfile,'r')
 except:
     print "Can not open %s"%keyfile
+    sys.exit()
 
 #run as deamon 
 if ( "-d" in arguments ):
