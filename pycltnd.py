@@ -39,9 +39,9 @@ if ( "-t" in arguments ):
 if ( "-c" in arguments ):
     c = arguments.index("-c")+1
     try:
-        count = arguments[c]
+        count = int(arguments[c])
     except:
-        count=20
+        count = 20
 
 if ("getyahoo" in arguments):
     getyahoo = True
