@@ -22,7 +22,7 @@ if ( "-u" in arguments ):
     u = arguments.index("-u")+1
     posturl = arguments[u]
 else:
-    print "Must Input a Target URL -t url"
+    print "Must Input a Target URL -u url"
     sys.exit()
 
 if ( "-k" in arguments ):
