@@ -19,7 +19,7 @@ class Collection:
         req = urllib2.Request(url,headers=header)
         try:
             page = urllib2.urlopen(req,timeout=10)
-            return page.read()
+            return page.read().strip()
         except:
             return False
         
