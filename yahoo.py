@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding=utf-8 -*-
 from collection import Collection
 import re
 class Yahoo(Collection):
