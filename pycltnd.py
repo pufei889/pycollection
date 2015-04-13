@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,post,yahoo,ask,urllib
+import os,sys,time,post,yahoo,ask,urllib,bing
 
 """
 arguments:
@@ -44,9 +44,11 @@ if ( "-c" in arguments ):
         count = 20
 
 if ("getyahoo" in arguments):
-    getyahoo = True
+    engine = 'yahoo'
+elif ("getbing" in arguments):
+    engine = 'bing'
 else:
-    getyahoo = False
+    engine = 'ask'
 
 try:
     keyhd=open(keyfile,'r')
@@ -78,16 +80,25 @@ while True:
         key = keyhd.readline().strip()
         if len(key) == 0: break
         post_content = ''
-        if not getyahoo:
+        if engine == 'ask':
             for i in range(count/10):
                 page = str(i+1)
                 asurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 AsCo=ask.Ask(asurl,'http://www.ask.com/')
                 post_content = post_content + AsCo.filter()
-        else:
+        elif engine == 'yahoo':
             geturl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
             YaCo=yahoo.Yahoo(geturl,'https://www.yahoo.com/')
             post_content = YaCo.filter()
+            
+        elif engine == 'bing':
+            post_content = ''
+            for i in range(count/10):
+                page = str(i+1)
+                geturl="http://cn.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
+                YaCo=bing.Bing(geturl,'http://www.bing.com/')
+                post_content = post_content + YaCo.filter()
+        print post_content
 
         if (len(post_content) > 10 ):
                     try:
@@ -108,4 +119,3 @@ while True:
     
 #close
 print "Task Complete"
-keyhd.close()
