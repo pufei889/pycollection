@@ -95,7 +95,7 @@ while True:
             post_content = ''
             for i in range(count/10):
                 page = str(i+1)
-                geturl="http://cn.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
+                geturl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
                 YaCo=bing.Bing(geturl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
 
