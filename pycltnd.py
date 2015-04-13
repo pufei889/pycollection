@@ -98,7 +98,6 @@ while True:
                 geturl="http://cn.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
                 YaCo=bing.Bing(geturl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
-        print post_content
 
         if (post_content and len(post_content) > 10 ):
                     try:
