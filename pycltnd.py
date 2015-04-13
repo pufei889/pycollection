@@ -100,7 +100,7 @@ while True:
                 post_content = post_content + YaCo.filter()
         print post_content
 
-        if (len(post_content) > 10 ):
+        if (post_content and len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
                         result=post.POST(pl,{"post_title":key,"post_content":post_content})
