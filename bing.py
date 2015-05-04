@@ -9,7 +9,7 @@ class Bing(Collection):
                 
                 pas = re.compile(r"<li class=\"b_algo[^>]*>([\s\S]*?)<\/div><\/li>",re.I|re.M)
                 h3 = re.compile(r"<h2[^>]*>([\s\S]*?)<\/h2>",re.I|re.M)
-                abstr = re.compile(r"<div class=\"b_caption\">([\s\S]*?)<\/p>",re.I|re.M)
+                abstr = re.compile(r"<p>([\s\S]*?)<\/p>",re.I|re.M)
                 f = pas.findall(self.content)
                 artice = ""
                 for i in f:
