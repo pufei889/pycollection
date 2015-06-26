@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,post,yahoo,ask,urllib,bing
+import os,sys,time,post,yahoo,ask,urllib,bing,wow
 
 """
 arguments:
@@ -47,6 +47,8 @@ if ("getyahoo" in arguments):
     engine = 'yahoo'
 elif ("getbing" in arguments):
     engine = 'bing'
+elif ("getwow" in arguments):
+    engine = 'wow'
 else:
     engine = 'ask'
 
@@ -80,29 +82,38 @@ while True:
         key = keyhd.readline().strip()
         if len(key) == 0: break
         post_content = ''
-        if engine == 'ask':
-            for i in range(count/10):
-                page = str(i+1)
-                asurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
-                AsCo=ask.Ask(asurl,'http://www.ask.com/')
-                post_content = post_content + AsCo.filter()
-        elif engine == 'yahoo':
-            geturl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
-            YaCo=yahoo.Yahoo(geturl,'https://www.yahoo.com/')
+
+        if engine == 'yahoo':
+            rurl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
+            YaCo=yahoo.Yahoo(rurl,'https://www.yahoo.com/')
             post_content = YaCo.filter()
+
+        elif engine == 'wow':
+            for i in range(count/10):
+                page = str(i)
+                rurl="http://www.wow.com/search?q=%s&page=%s"%(urllib.quote(key),page)
+                WoCo=wow.Wow(rurl,'http://www.wow.com/')
+                post_content = post_content + WoCo.filter()
+
+        elif engine == 'ask':
+            for i in range(count/10):
+                page = str(i)
+                rurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
+                AsCo=ask.Ask(rurl,'http://www.ask.com/')
+                post_content = post_content + AsCo.filter()
+
             
         elif engine == 'bing':
-            post_content = ''
             for i in range(count/10):
                 page = str(i+1)
-                geturl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
-                YaCo=bing.Bing(geturl,'http://www.bing.com/')
+                rurl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
+                YaCo=bing.Bing(rurl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
 
         if (post_content and len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
-                        result=post.POST(pl,{"post_title":key,"post_content":post_content})
+                        result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
                     except:
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
