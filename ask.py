@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 from collection import Collection
-import re
-import HTMLParser
-h = HTMLParser.HTMLParser()
+import re,sys
 
 class Ask(Collection):
     def filter(self,ttag="h2",ctag="p"):
@@ -25,4 +23,4 @@ class Ask(Collection):
                         return artice
                         
 if __name__ == "__main__":
-      print "This is not a Direct execut program "
+    sys.exit()

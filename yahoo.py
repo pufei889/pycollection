@@ -24,4 +24,4 @@ class Yahoo(Collection):
                         return artice
                         
 if __name__ == "__main__":
-        print "Can not be excute!"
+    sys.exit()
