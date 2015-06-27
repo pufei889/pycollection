@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,post,yahoo,ask,urllib,bing,wow
+import os,sys,time,signal,urllib,post,yahoo,ask,bing,wow
 
 """
 arguments:
@@ -79,10 +79,13 @@ if ( "-d" in arguments ):
 """main"""
 while True:
     try:
-        key = keyhd.readline().strip()
-        if len(key) == 0: break
+        key = keyhd.readline()
+        if not key:break
+        key=key.strip()
+        if len(key) == 0: continue
         post_content = ''
 
+        ## GET CONTENT
         if engine == 'yahoo':
             rurl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
             YaCo=yahoo.Yahoo(rurl,'https://www.yahoo.com/')
@@ -101,7 +104,6 @@ while True:
                 rurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 AsCo=ask.Ask(rurl,'http://www.ask.com/')
                 post_content = post_content + AsCo.filter()
-
             
         elif engine == 'bing':
             for i in range(count/10):
@@ -110,6 +112,7 @@ while True:
                 YaCo=bing.Bing(rurl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
         
+        ##POST CONTENT
         if (post_content and len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
@@ -120,12 +123,14 @@ while True:
         else:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
             
-        sys.stdout.flush()
-        time.sleep(interval)
     except KeyboardInterrupt,e:
+        sys.stdou.write("User Termination\n")
         break
     except:
         pass
+
+    sys.stdout.flush()
+    time.sleep(interval)
     
 #close
-print "Task Complete"
+sys.exit(0)
