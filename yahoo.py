@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding=utf-8 -*-
 from collection import Collection
-import re
+import re,sys
 class Yahoo(Collection):
         
         def filter(self,ttag="h2",ctag="p"):
@@ -19,7 +19,7 @@ class Yahoo(Collection):
                         content = "<"+ctag+">"+re.sub(r'<[^>]+>','',content)+"</"+ctag+">\n"
                         artice = artice + title + content
                 if ( len(artice) < 5 or artice == "None"):
-                        return False
+                        return ""
                 else:
                         return artice
                         

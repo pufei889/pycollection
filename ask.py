@@ -18,7 +18,7 @@ class Ask(Collection):
                         content = "<"+ctag+">"+re.sub(r'[\r\n]*','',re.sub(r'^\d+[\w\s]*...','',re.sub('<[^>]+>','',content)))+"</"+ctag+">\n"
                         artice = artice + title + content
                 if ( len(artice) < 5 or artice == "None"):
-                        return False
+                        return ""
                 else:
                         return artice
                         

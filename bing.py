@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from collection import Collection
-import re
+import re,sys
 
 class Bing(Collection):
         def filter(self,ttag="h2",ctag="p"):
@@ -22,7 +22,7 @@ class Bing(Collection):
                         except:
                                 pass
                 if ( len(artice) < 5 or artice == "None"):
-                        return False
+                        return ""
                 else:
                         return artice
                         

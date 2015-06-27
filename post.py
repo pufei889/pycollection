@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import urllib2,urllib
+import urllib2,urllib,sys
 
 def POST(url,data):
     formdata=urllib.urlencode(data)
@@ -10,4 +10,4 @@ def POST(url,data):
 
 
 if __name__ == "__main__":
-    print "Can not be excute"
+    sys.exit()
