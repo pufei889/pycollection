@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,signal,urllib,post,yahoo,ask,bing,wow
-import * from runexception
+import os,sys,time,urllib,post,yahoo,ask,bing,wow
 
 """
 arguments:
@@ -23,7 +22,7 @@ if ( "-u" in arguments ):
     u = arguments.index("-u")+1
     posturl = arguments[u]
 else:
-    print "Must Input a Target URL -u url"
+    sys.stdout.write("Must Input a Target URL -u url\n")
     sys.exit()
 
 if ( "-k" in arguments ):
@@ -56,7 +55,7 @@ else:
 try:
     keyhd=open(keyfile,'r')
 except:
-    print "Can not open %s"%keyfile
+    sys.stdout.write("Can not open %s\n"%keyfile)
     sys.exit()
 
 #run as deamon 
@@ -64,7 +63,7 @@ if ( "-d" in arguments ):
     try:
         pid = os.fork()
     except:
-        print "Your System are not support to run as deamon"
+        sys.stdout.write("Your System are not support to run as deamon\n")
         sys.exit()
     
     if pid:sys.exit()
@@ -77,29 +76,15 @@ if ( "-d" in arguments ):
     os.umask(0)
     os.chdir("/")
         
-
-
-"""SIGNAL"""
-
-def signal_exit(signo,frame):
-    print signo
-    if signo == 2:
-        raise RunException('User Termination')
-    elif signo == 15:
-        raise RunException('System Termination')
-
-signal.signal(signal.SIGINT, signal_exit)
-signal.signal(signal.SIGTREM, signal_exit)
-
 """main"""
 while True:
+    key = keyhd.readline()
+    if not key:break
+    key=key.strip()
+    if len(key) == 0: continue
+    post_content = ''
+    
     try:
-        key = keyhd.readline()
-        if not key:break
-        key=key.strip()
-        if len(key) == 0: continue
-        post_content = ''
-
         ## GET CONTENT
         if engine == 'yahoo':
             rurl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
@@ -137,16 +122,12 @@ while True:
                         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
         else:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
-            
-    except RunException,e:
-        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
+        sys.stdout.flush()
+        time.sleep(interval)
+    except KeyboardInterrupt:
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User Termination"))
         break
-    except BaseException,e:
-        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
+    except:
         pass
-
-    sys.stdout.flush()
-    time.sleep(interval)
-    
 #close
 sys.exit(0)
