@@ -109,7 +109,7 @@ while True:
                 rurl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
                 YaCo=bing.Bing(rurl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
-
+        
         if (post_content and len(post_content) > 10 ):
                     try:
                         pl="%s?action=save&secret=yht123hito"%posturl
