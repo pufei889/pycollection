@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
 import os,sys,time,signal,urllib,post,yahoo,ask,bing,wow
+import * from runexception
 
 """
 arguments:
@@ -76,6 +77,20 @@ if ( "-d" in arguments ):
     os.umask(0)
     os.chdir("/")
         
+
+
+"""SIGNAL"""
+
+def signal_exit(signo,frame):
+    print signo
+    if signo == 2:
+        raise RunException('User Termination')
+    elif signo == 15:
+        raise RunException('System Termination')
+
+signal.signal(signal.SIGINT, signal_exit)
+signal.signal(signal.SIGTREM, signal_exit)
+
 """main"""
 while True:
     try:
@@ -123,14 +138,15 @@ while True:
         else:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
             
-        sys.stdout.flush()
-        time.sleep(interval)
-    except KeyboardInterrupt,e:
-        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"User Termination"))
+    except RunException,e:
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
         break
-    except:
+    except BaseException,e:
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
         pass
 
+    sys.stdout.flush()
+    time.sleep(interval)
     
 #close
 sys.exit(0)
