@@ -123,14 +123,14 @@ while True:
         else:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
             
+        sys.stdout.flush()
+        time.sleep(interval)
     except KeyboardInterrupt,e:
-        sys.stdou.write("User Termination\n")
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"User Termination"))
         break
     except:
         pass
 
-    sys.stdout.flush()
-    time.sleep(interval)
     
 #close
 sys.exit(0)
