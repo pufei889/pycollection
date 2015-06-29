@@ -14,8 +14,8 @@ class Bing(Collection):
                 artice = ""
                 for i in f:
                         try:
-                                title = h3.search(i).group(1).strip()
-                                content = abstr.search(i).group(1).strip()
+                                title = h3.search(i).group(1).strip() if h3.search(i) else ''
+                                content = abstr.search(i).group(1).strip() if abstr.search(i) else ''
                                 title = "<"+ttag+">"+re.sub(r'<[^>]+>','',title)+"</"+ttag+">\n"
                                 content = "<"+ctag+">"+re.sub(r'<[^>]+>','',content)+"</"+ctag+">\n"
                                 artice = artice + title + content

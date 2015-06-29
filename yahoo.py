@@ -13,8 +13,8 @@ class Yahoo(Collection):
                 f = pas.findall(self.content)
                 artice = ""
                 for i in f:
-                        title = h3.search(i).group(1)
-                        content = abstr.search(i).group(1)
+                        title = h3.search(i).group(1) if h3.search(i) else ''
+                        content = abstr.search(i).group(1) if abstr.search(i) else ''
                         title = "<"+ttag+">"+re.sub(r'<[^>]+>','',title)+"</"+ttag+">\n"
                         content = "<"+ctag+">"+re.sub(r'<[^>]+>','',content)+"</"+ctag+">\n"
                         artice = artice + title + content
