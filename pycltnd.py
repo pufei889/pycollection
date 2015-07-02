@@ -115,7 +115,7 @@ while True:
 
         time.sleep(interval)
     except RunException,e:
-        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
+        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,e))
         pass
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
