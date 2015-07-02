@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,post,yahoo,ask,bing,wow
-
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow
+from runexception import *
 """
 arguments:
 -u:    POST url, needed
@@ -65,7 +65,7 @@ if ( "-d" in arguments ):
     except:
         sys.stdout.write("Your System are not support to run as deamon\n")
         sys.exit()
-    
+
     if pid:sys.exit()
     logfd = open(logfile,'a+')
     os.dup2(logfd.fileno(),0)
@@ -75,7 +75,8 @@ if ( "-d" in arguments ):
     os.setsid()
     os.umask(0)
     os.chdir("/")
-        
+
+
 """main"""
 while True:
     key = keyhd.readline()
@@ -83,7 +84,7 @@ while True:
     key=key.strip()
     if len(key) == 0: continue
     post_content = ''
-    
+
     try:
         ## GET CONTENT
         if engine == 'yahoo':
@@ -104,30 +105,33 @@ while True:
                 rurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 AsCo=ask.Ask(rurl,'http://www.ask.com/')
                 post_content = post_content + AsCo.filter()
-            
+
         elif engine == 'bing':
             for i in range(count/10):
                 page = str(i+1)
                 rurl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
                 YaCo=bing.Bing(rurl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
-        
-        ##POST CONTENT
-        if (post_content and len(post_content) > 10 ):
-                    try:
-                        pl="%s?action=save&secret=yht123hito"%posturl
-                        result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
-                        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
-                    except:
-                        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
-        else:
-            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
-        sys.stdout.flush()
+
         time.sleep(interval)
-    except KeyboardInterrupt:
-        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User Termination"))
-        break
-    except:
+    except RunException,e:
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),e))
         pass
+    except KeyboardInterrupt:
+        sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
+        break
+
+    ##POST CONTENT
+    if (post_content and len(post_content) > 10 ):
+        try:
+            pl="%s?action=save&secret=yht123hito"%posturl
+            result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
+        except:
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
+    else:
+        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
+
+    sys.stdout.flush()
 #close
 sys.exit(0)

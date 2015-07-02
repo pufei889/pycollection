@@ -5,12 +5,11 @@ import re,sys
 
 class Wow(Collection):
     def filter(self,ttag="h2",ctag="p"):
-        if not self.content:return
-
         pas = re.compile(r"<li about=\"null\">([\s\S]*?)<\/li>",re.I|re.M)
         h3 = re.compile(r"<a[^>]*>([\s\S]*?)<\/a>",re.I|re.M)
         abstr = re.compile(r"<p property=\"f:desc\">([\s\S]*?)<\/p>",re.I|re.M)
         f = pas.findall(self.content)
+        if not f: return ""
         artice = ""
         for i in f:
             try:
