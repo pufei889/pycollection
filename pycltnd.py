@@ -13,6 +13,7 @@ arguments:
 """
 
 logfile   = "./pycltnd.log"
+errfile   = "./pycltnd.err"
 keyfile = "./key.txt"
 
 arguments = sys.argv
@@ -62,16 +63,18 @@ except:
 if ( "-d" in arguments ):
     try:
         pid = os.fork()
+        logfd = open(logfile,"a+")
+        errfd = open(errfile,"a+")
+        os.close(0)
+        os.dup2(logfd.fileno(),1)
+        os.dup2(errfd.fileno(),2)
+        logfd.close()
+        errfd.close()
     except:
         sys.stdout.write("Your System are not support to run as deamon\n")
         sys.exit()
 
     if pid:sys.exit()
-    logfd = open(logfile,'a+')
-    os.dup2(logfd.fileno(),0)
-    os.dup2(logfd.fileno(),1)
-    os.dup2(logfd.fileno(),2)
-    os.close(logfd.fileno())
     os.setsid()
     os.umask(0)
     os.chdir("/")
