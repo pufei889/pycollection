@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
 import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow
-from runexception import *
+
 """
 arguments:
 -u:    POST url, needed
@@ -114,9 +114,6 @@ while True:
                 post_content = post_content + YaCo.filter()
 
         time.sleep(interval)
-    except RunException,e:
-        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,e))
-        pass
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
         break

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import urllib2,urllib,sys,gzip,StringIO
-from runexception import *
 
 class Collection:
     __referer = "http://www.google.com/"
@@ -18,10 +17,8 @@ class Collection:
             req = urllib2.Request(url,headers=header)
             page = urllib2.urlopen(req,timeout=10)
             rpheader = page.info()
-        except urllib2.URLError,e:
-            raise RunException(e)
-        except urllib2.HTTPError,e:
-            raise RunException(e)
+        except BaseException,e:
+            self.content=''
 
         encoding = rpheader.get("Content-Encoding")
         if encoding == 'gzip':
