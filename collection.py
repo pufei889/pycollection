@@ -17,14 +17,15 @@ class Collection:
             req = urllib2.Request(url,headers=header)
             page = urllib2.urlopen(req,timeout=10)
             rpheader = page.info()
+            body = page.read()
         except BaseException,e:
             self.content=''
 
         encoding = rpheader.get("Content-Encoding")
         if encoding == 'gzip':
-            self.content=gz_decoding(page.read()).strip()
+            self.content=gz_decoding(body).strip()
         else:
-            self.content=page.read().strip()
+            self.content=body.strip()
 
 
 
