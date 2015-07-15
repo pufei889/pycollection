@@ -18,10 +18,10 @@ class Collection:
             page = urllib2.urlopen(req,timeout=10)
             rpheader = page.info()
             body = page.read()
-        except BaseException,e:
+        except:
             self.content=''
         
-        if(not self.content ==''):
+        if(not self.content==''):
             encoding = rpheader.get("Content-Encoding")
             if encoding == 'gzip':
                 self.content=gz_decoding(body).strip()
