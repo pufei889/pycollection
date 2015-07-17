@@ -20,13 +20,13 @@ class Collection:
             body = page.read()
         except:
             self.content=''
+            return
         
-        if(not self.content==''):
-            encoding = rpheader.get("Content-Encoding")
-            if encoding == 'gzip':
-                self.content=gz_decoding(body).strip()
-            else:
-                self.content=body.strip()
+        encoding = rpheader.get("Content-Encoding")
+        if encoding == 'gzip':
+            self.content=gz_decoding(body).strip()
+        else:
+            self.content=body.strip()
 
 
 
