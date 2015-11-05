@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia
 
 """
 arguments:
@@ -44,14 +44,16 @@ if ( "-c" in arguments ):
     except:
         count = 20
 
-if ("getyahoo" in arguments):
-    engine = 'yahoo'
+if ("getask" in arguments):
+    engine = 'ask'
 elif ("getbing" in arguments):
     engine = 'bing'
+elif ("getecosia" in arguments):
+    engine = 'ecosia'
 elif ("getwow" in arguments):
     engine = 'wow'
 else:
-    engine = 'ask'
+    engine = 'yahoo'
 
 try:
     keyhd=open(keyfile,'r')
@@ -115,6 +117,13 @@ while True:
                 rurl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
                 YaCo=bing.Bing(rurl,'http://www.bing.com/')
                 post_content = post_content + YaCo.filter()
+
+        elif engine == 'ecosia':
+            for i in range(count/10):
+                page = str(i)
+                rurl="https://www.ecosia.org/search?p=%s&q=%s"%(page,urllib.quote(key))
+                EcCo=ecosia.Ecosia(rurl,'https://www.ecosia.org/')
+                post_content = post_content + EcCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
