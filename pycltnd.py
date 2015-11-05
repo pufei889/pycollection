@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex
 
 """
 arguments:
@@ -52,6 +52,8 @@ elif ("getecosia" in arguments):
     engine = 'ecosia'
 elif ("getwow" in arguments):
     engine = 'wow'
+elif ("getyandex" in arguments):
+    engine = 'yandex'
 else:
     engine = 'yahoo'
 
@@ -124,6 +126,12 @@ while True:
                 rurl="https://www.ecosia.org/search?p=%s&q=%s"%(page,urllib.quote(key))
                 EcCo=ecosia.Ecosia(rurl,'https://www.ecosia.org/')
                 post_content = post_content + EcCo.filter()
+                
+        elif engine == 'yandex':
+            for i in range(count/10):
+                page = str(i+1)
+                yanCo = yandex.Yandex(key,page)
+                post_content = post_content + yanCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
