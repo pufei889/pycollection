@@ -4,8 +4,7 @@
 import urllib2,StringIO,sys
 from urllib import quote
 from  xml.dom import  minidom
-reload(sys)
-sys.setdefaultencoding('utf-8')
+
 class Yandex():
     def __init__(self,query,page=1,lang="en",uname="hitoy2015",key="03.342224283:96c3252026935a65f6cc0475cedf3519"):
         searchurl="https://yandex.com/search/xml?user=%s&key=%s&query=%s&l10n=%s&page=%s"%(uname,key,quote(query),lang,page)
@@ -22,7 +21,7 @@ class Yandex():
                 artice = artice + "%s\r\n%s\r\n" % (h2,p)
             except:
                 pass
-        return artice
+        return artice.encode("utf-8")
     
 if __name__ == "__main__":
     sys.exit()
