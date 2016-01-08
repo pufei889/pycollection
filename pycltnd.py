@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc
 
+sysnote="""
+Author	Hito
+Blog	https://www.hitoy.org/
+Update	2016.01.08
+"""
+sys.stdout.write(sysnote)
 """
 arguments:
 -u:    POST url, needed
@@ -54,6 +60,8 @@ elif ("getwow" in arguments):
     engine = 'wow'
 elif ("getyandex" in arguments):
     engine = 'yandex'
+elif ("getcoccoc" in arguments):
+	engine = 'coccoc'
 else:
     engine = 'yahoo'
 
@@ -132,7 +140,12 @@ while True:
                 page = str(i+1)
                 yanCo = yandex.Yandex(key,page)
                 post_content = post_content + yanCo.filter()
-
+        elif engine == 'coccoc':
+            for i in range(count/10):
+                page  = str(i)
+                rurl = "http://coccoc.com/composer?q=%s&p=%s"%(urllib.quote(key),page)
+                coccocO = coccoc.Coccoc(rurl)
+                post_content = post_content + coccocO.filter()
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
