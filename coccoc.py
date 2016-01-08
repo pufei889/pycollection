@@ -10,7 +10,7 @@ class Coccoc(Collection):
 			search = json.loads(self.content)
 		except:
 			search = None
-		if not search and not search['search']['search_results']:
+		if not search['search']['search_results']:
 			return ''
 		search_results = search['search']['search_results']
 		strings = ""
@@ -18,4 +18,4 @@ class Coccoc(Collection):
 			head = "<%s>%s</%s>"%(ttag,tagre.sub("",i['title']),ttag)
 			content = "<%s>%s</%s>"%(ctag,tagre.sub("",i['content']),ctag)
 			strings +=("\r\n"+head+"\r\n"+content)
-		return strings
+		return strings.encode("utf-8")

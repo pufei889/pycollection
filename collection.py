@@ -36,7 +36,5 @@ def gz_decoding(data):
     data2 = gziper.read() 
     return data2   
 
-
-
 if __name__ == "__main__":
     sys.exit()

@@ -66,7 +66,7 @@ else:
     engine = 'yahoo'
 
 try:
-    keyhd=open(keyfile,'r')
+    keyhd=open(keyfile,'rb')
 except:
     sys.stdout.write("Can not open %s\n"%keyfile)
     sys.exit()
@@ -96,7 +96,7 @@ if ( "-d" in arguments ):
 while True:
     key = keyhd.readline()
     if not key:break
-    key=key.strip()
+    key=key.strip().lstrip("\xef\xbb\xbf")
     if len(key) == 0: continue
     post_content = ''
 
@@ -144,8 +144,9 @@ while True:
             for i in range(count/10):
                 page  = str(i)
                 rurl = "http://coccoc.com/composer?q=%s&p=%s"%(urllib.quote(key),page)
-                coccocO = coccoc.Coccoc(rurl)
+                coccocO = coccoc.Coccoc(rurl,"http://coccoc.com/search")
                 post_content = post_content + coccocO.filter()
+
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
@@ -157,8 +158,8 @@ while True:
             pl="%s?action=save&secret=yht123hito"%posturl
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
-        except:
-            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
+        except Exception,e:
+			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key,'publish Failure',e))
     else:
         sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
 
