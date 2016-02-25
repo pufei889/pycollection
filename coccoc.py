@@ -10,7 +10,7 @@ class Coccoc(Collection):
 			search = json.loads(self.content)
 		except:
 			search = None
-		if not search['search']['search_results']:
+		if not search or not search['search']['search_results']:
 			return ''
 		search_results = search['search']['search_results']
 		strings = ""
