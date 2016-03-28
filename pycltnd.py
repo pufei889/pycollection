@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos
 
 sysnote="""
 Author	Hito
 Blog	https://www.hitoy.org/
-Update	2016.01.08
+Update	2016.03.28
 """
 sys.stdout.write(sysnote)
 """
@@ -62,6 +62,10 @@ elif ("getyandex" in arguments):
     engine = 'yandex'
 elif ("getcoccoc" in arguments):
 	engine = 'coccoc'
+elif ("getizito" in arguments):
+    engine = 'izito'
+elif ("getlycos" in arguments):
+    engine = 'lycos'
 else:
     engine = 'yahoo'
 
@@ -146,7 +150,18 @@ while True:
                 rurl = "http://coccoc.com/composer?q=%s&p=%s"%(urllib.quote(key),page)
                 coccocO = coccoc.Coccoc(rurl,"http://coccoc.com/search")
                 post_content = post_content + coccocO.filter()
-
+        elif engine == 'izito':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "http://www.izito.com/?query=%s&pg=%s"%(urllib.quote(key),page)
+                izitoO = izito.Izito(rurl,"http://www.izito.com/")
+                post_content = post_content + izitoO.filter()
+        elif engine == 'lycos':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "http://search.lycos.com/web/?q=%s&pn=%s"%(urllib.quote(key),page)
+                lycosO= lycos.Lycos(rurl,"http://search.lycos.com/")
+                post_content = post_content + lycosO.filter()
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
