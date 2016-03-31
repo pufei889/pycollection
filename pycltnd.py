@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu
 
 sysnote="""
 Author	Hito
@@ -66,6 +66,8 @@ elif ("getizito" in arguments):
     engine = 'izito'
 elif ("getlycos" in arguments):
     engine = 'lycos'
+elif("getbaidu" in arguments):
+    engine = 'baidu'
 else:
     engine = 'yahoo'
 
