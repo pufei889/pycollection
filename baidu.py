@@ -6,7 +6,7 @@ class Baidu(Collection):
     def filter(self,ttag="h2",ctag="p"):
         pas = re.compile(r"<div\sclass=\"result\sc-container[^>]*>([\s\S]*?)<div\sclass=\"f13\">",re.I|re.M)
         h3 = re.compile(r"<h3[^>]*>([\s\S]*?)<\/h3>",re.I|re.M)
-        abstr = re.compile(r"<div\sclass=\"c-abstract\"><span[^>]*>[^<]*<\/span>([\s\S]*?)<\/div>",re.I|re.M)
+        abstr = re.compile(r"<div\sclass=\"c-abstract[^>]*>([\s\S]*?)<\/div>",re.I|re.M)
         f = pas.findall(self.content)
         if not f: return ""
         artice = ""
@@ -14,6 +14,7 @@ class Baidu(Collection):
             try:
                 title = h3.search(i).group(1) if h3.search(i) else ''
                 content = abstr.search(i).group(1) if abstr.search(i) else ''
+                content = re.sub(r"<span[^>]*>.*?<\/span>","",content)
                 title = "<"+ttag+">"+re.sub(r'<[^>]+>','',title)+"</"+ttag+">\n"
                 content = "<"+ctag+">"+re.sub(r'<[^>]+>','',content)+"</"+ctag+">\n"
                 artice = artice + title + content

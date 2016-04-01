@@ -6,7 +6,7 @@ import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,iz
 sysnote="""
 Author	Hito
 Blog	https://www.hitoy.org/
-Update	2016.03.28
+Update	2016.04.01
 """
 sys.stdout.write(sysnote)
 """
@@ -164,6 +164,12 @@ while True:
                 rurl = "http://search.lycos.com/web/?q=%s&pn=%s"%(urllib.quote(key),page)
                 lycosO= lycos.Lycos(rurl,"http://search.lycos.com/")
                 post_content = post_content + lycosO.filter()
+        elif engine == 'baidu':
+            for i in range(count/10):
+                page = str(count - 10);
+                rurl = "https://www.baidu.com/s?wd=%s&pn=%s"%(urllib.quote(key),page)
+                baiduO= baidu.Baidu(rurl,"https://www.baidu.com/")
+                post_content = post_content + baiduO.filter()
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
