@@ -190,9 +190,9 @@ while True:
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),result.decode("utf-8")))
         except Exception,e:
-			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key,'publish Failure',e))
+			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),'publish Failure',e))
     else:
-        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
+        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),"Collection Failure"))
 
     sys.stdout.flush()
 #close

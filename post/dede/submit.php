@@ -14,6 +14,7 @@ header("Content-type:text/html;charset=utf-8");
 //如果用户直接访问，密码错误，则退出执行
 if(!isset($_POST)||@$_GET["secret"]!=$password) exit("非法访问!");
 require_once(dirname(__FILE__)."/include/common.inc.php");
+require_once("./filter.php");
 $action=$_GET["action"];
 //获取栏目列表
 if($action=='getlist'){
@@ -47,6 +48,7 @@ else if($action=='save'){
 	$title=isset($_POST["post_title"])?addslashes(trim($_POST["post_title"])):"";
 	$category=isset($_POST["category"])?addslashes(trim($_POST["category"])):$category;
 	$body=isset($_POST["post_content"])?addslashes(trim($_POST["post_content"])):"";
+    $body = addslashes(showimglist($body));
 	if($title=="") exit("发布失败，标题为空!");
 	if($category=="") exit("发布失败，栏目为空!");
 	if($body=="") exit("发布失败，内容为空!");
@@ -77,8 +79,8 @@ else if($action=='save'){
 	$addtable = trim($cts['addtable']);
 	$sqll="insert into `$addtable` (aid,typeid,body,userip) values ($aid,$category,\"$body\",\"$ip\")";
 	if(empty($addtable)||!$dsql->ExecuteNoneQuery($sqll)){
-		$dsql->ExecuteNoneQuery("DELETE FROM `#@__archives` WHERE id='$arcID'");
-		$dsql->ExecuteNoneQuery("DELETE FROM `#@__arctiny` WHERE id='$arcID'");
+		print_r($dsql->ExecuteNoneQuery("DELETE FROM `#@__archives` WHERE id='$arcID'"));
+		print_r($dsql->ExecuteNoneQuery("DELETE FROM `#@__arctiny` WHERE id='$arcID'"));
 		exit("发布失败，请检查数据表 $addtable");
 	}
 	echo '发布成功!';
