@@ -6,7 +6,7 @@ import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,iz
 sysnote="""
 Author	Hito
 Blog	https://www.hitoy.org/
-Update	2016.04.01
+Update	2016.04.06
 """
 sys.stdout.write(sysnote)
 """
@@ -188,7 +188,7 @@ while True:
         try:
             pl="%s?action=save&secret=yht123hito"%posturl
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
-            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),result.decode("utf-8")))
         except Exception,e:
 			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key,'publish Failure',e))
     else:
