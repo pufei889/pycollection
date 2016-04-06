@@ -48,10 +48,10 @@ else if($action=='save'){
 	$title=isset($_POST["post_title"])?addslashes(trim($_POST["post_title"])):"";
 	$category=isset($_POST["category"])?addslashes(trim($_POST["category"])):$category;
 	$body=isset($_POST["post_content"])?addslashes(trim($_POST["post_content"])):"";
-    $body = addslashes(showimglist($body));
 	if($title=="") exit("发布失败，标题为空!");
 	if($category=="") exit("发布失败，栏目为空!");
 	if($body=="") exit("发布失败，内容为空!");
+    $body = addslashes(showimglist($body));
 	//非必须的内容
 	$shorttitle=isset($_POST["shorttitle"])?addslashes(trim($_POST["shorttitle"])):"";
 	$keywords=isset($_POST["keywords"])?addslashes(trim($_POST["keywords"])):"";
