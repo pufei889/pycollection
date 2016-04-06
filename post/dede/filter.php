@@ -9,7 +9,7 @@ function showimglist($content){
 	foreach($match[0] as $t){
                  preg_match("/<h\d>(.*?)<\/h\d>/i",$t,$m);
                  $alt=strtolower($m[1]);
-		$li="<li>".show_rand_img($alt,1,"/uploads/150617/").$t."</li>";
+		$li="<li>".show_rand_img($alt,1,"/images/").$t."</li>";
 		$content = $content.$li;
 	}
 	return "<ul class=\"list\">".$content."</ul>";
@@ -18,16 +18,23 @@ function showimglist($content){
 function show_rand_img($alt="",$num=1,$dir="/images/"){
 	$document_root=$_SERVER["DOCUMENT_ROOT"];
 	$imgdir=$document_root.$dir;
-	if(!file_exists($imgdir)) exit("图片目录不存在");
-	$imgarr=scandir($imgdir);
-	if($num>count($imgarr)) $num=count($imgarr);
-	$re="";
-	for($i=0;$i<$num;$i++){
-		$s=rand(0,count($imgarr));
-		if(!is_file($imgdir.$imgarr[$s])){$i--;continue;}
-		$re .= "<img src=\"$dir$imgarr[$s]\" alt=\"$alt\" class=\"imglist\"/>";
-	}
-return $re;
+	if(!file_exists($imgdir)) return;
+    $dirarr=array();
+    $d = opendir($imgdir);
+    while(($file = readdir($d))!== false){
+        if($file == ".." || $file==".") continue;
+        $type = substr($file,strpos($file,".")+1);
+        if($type != "jpg" && $type != "gif" && $type != "png") continue;
+        array_push($dirarr,$file);
+    }
+    closedir($d);
+    shuffle($dirarr);
+    $html = "";
+    for($i = 0 ; $i < $num ; $i++){
+        $filename = $dirarr[$i];
+		$html .= "<img src=\"$dir$filename\" alt=\"$alt\" class=\"imglist\"/>";
+    }
+    return $html;
 }
 
 //show totle artice
