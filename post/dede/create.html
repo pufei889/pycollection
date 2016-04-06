@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+<meta charset="UTF-8">
+<title>织梦预约发布插件控制界面</title>
+<meta name="author" content="杨海涛 http://www.hitoy.org/"/>
+<meta name="description" content="为增加功能和体验，低级浏览器将不支持操作，请使用chrome等高级浏览器"/>
+<style>
+	* {margin:0;padding:0}
+	body {font-size:12px;font-family:'宋体',Arial,Verdana;line-height:24px}
+	.addsites {width:700px;height:400px;margin:20px auto;border:1px solid #ccc;background:#e0e0e0;padding:5px;border-radius:5px}
+	.addsites textarea{width:690px;height:300px;max-width:690px;max-height:300px;border-radius:5px;outline:none;padding:5px}
+	.addsites button {float:right;width:80px;height:28px;cursor:pointer}
+	table {width:1080px;margin:20px;border-collapse:collapse}
+	table td {border:1px solid #ccc;padding:0 5px;background:#e0e0e0}
+	table tr:nth-child(even) td{background:white}
+	table tr td:last-child {text-align:center;}
+	table tr td iframe {width:120px;height:30px;border:none;s}
+	#add {width:120px;height:40px;position:fixed;top:0;right:0;cursor:pointer}
+	#update {position}
+	#configbox {position:absolute;z-index:999;left:200px;top:22px;width:258px;background:#eee;padding:4px;font-size:12px;line-height:30px}
+	#configbox form {padding:4px}
+	#configbox input {height:20px;}
+	#configbox input[type='submit'] {margin-left:50px;cursor:pointer}
+	#configbox input[type='reset'] {margin-left:50px;cursor:pointer}
+</style>
+</head>
+<body>
+<script>
+	//定义接口密码，请和create.php中的密码保持一致
+	var password="zg123";
+	if(!window.addEventListener||!window.localStorage) alert("您的浏览器版本过低，请使用Chrome等高级浏览器!");
+	var storage=window.localStorage;
+	document.addEventListener('DOMContentLoaded',function(){
+		if(!storage.websites){
+			document.body.innerHTML='<div class="addsites"><p>&nbsp;&nbsp;没有需要监控的网站，请输入需要监控的网站，一行一个:</p>	<p>&nbsp;&nbsp;&nbsp;&nbsp;如www.hitoy.org,不需要输入协议和路径</p><textarea id="websites"></textarea><button id="addwebsites">确定</button></div>';
+			document.getElementById("addwebsites").onclick=function(){
+				var websites=trim(document.getElementById("websites").value);
+				var websitearr=websites.split(/\n+/);
+				storage.setItem("websites",websitearr);
+				//设置网站的默认更新数据
+				for (var url in websitearr){
+					//格式	数组	开始时间	结束时间	每日更新数量	已更新数量		剩余未发布文章条数	ping次数	sitemap
+					storage.setItem("webdatas["+websitearr[url]+"]","8:00,18:00,200,0,200,1,/sitemap.xml");
+				}
+				window.location.reload();
+			}
+			}else{
+			var statusmsg='<button id="add">增加网址</button><table cellpadding="0" cellspacing="0" id="statusmsg"><tr><td>网站</td><td>开始更新时间</td><td>结束更新时间</td><td>每日更新数量</td><td>已更新数量</td><td>剩余文章数量</td><td>Ping 篇/次</td><td>Sitemap</td><td>操作</td></tr></table>';
+			document.body.innerHTML=statusmsg;
+			var list=storage.websites.split(',');
+			//插入需要监控的网站
+			for (var i=0;i<list.length;i++){
+				var tr=document.createElement("tr");
+				tr.innerHTML='<td><a href="javascript:changeconfig(\''+list[i]+'\')" title="点击更改">'+list[i]+'</a></td><td>'+getconfig(list[i],0)+'</td><td>'+getconfig(list[i],1)+'</td><td>'+getconfig(list[i],2)+'</td><td>'+getconfig(list[i],3)+'</td><td>'+getconfig(list[i],4)+'</td><td>'+getconfig(list[i],5)+'</td><td>'+getconfig(list[i],6)+'</td><td><a href="javascript:removeurl(\''+list[i]+'\')" title="删除">X</a></td>';
+				document.getElementsByTagName('table')[0].appendChild(tr);
+			}
+			//添加单个网址
+			document.getElementById('add').addEventListener('click',function(){
+				var url=trim(prompt("请输入需要增加的网站地址(不要带HTTP):"));
+				if(!url){
+					alert("输入为空!");
+					return false;
+					}else if(storage.websites.match(url)){
+					alert("输入的网址已经存在!");	
+					return false;
+					}else{
+					urls=storage.websites.split(",");
+					urls.push(url);
+					storage.setItem("websites",urls)
+					storage.setItem("webdatas["+url+"]","8:00,18:00,200,0,200,1,/sitemap.xml");
+					window.location.reload();
+				}
+			},false);
+			//删除单个网址
+			window.removeurl=function(url){
+				url=trim(url);
+				urls=storage.websites.replace(url,'');
+				urls=urls.replace(",,",",");
+				urls=urls.replace(/^,/,"");
+				urls=urls.replace(/,$/,"");
+				storage.setItem("websites",urls);
+				storage.removeItem("webdatas["+url+"]");
+				window.location.reload();
+			}
+			deamon();
+		}
+		document.removeEventListener('DOMContentLoaded',arguments.caller,false);
+	},false);
+	function trim(str){
+		return str.replace(/^\s*/,"").replace(/\s*$/,"");
+	}
+	//获取网站配置
+	function getconfig(url,index){
+		var config=storage.getItem("webdatas["+url+"]").split(",")[index];
+		return config;
+	}
+	//设置网站配置
+	function setconfig(url,index,value){
+		var config=storage.getItem("webdatas["+url+"]").split(",");
+		config[index]=value;
+		storage.setItem("webdatas["+url+"]",config);
+		return true;
+	} 
+	//弹窗更改配置函数
+	function changeconfig(url){
+		var wrap=document.createElement("div");
+		wrap.id="configbox";
+		document.body.appendChild(wrap);
+		wrap.innerHTML="<form onsubmit='return updatesubmit(this)'><fieldset><legend>更改更新配置</legend></filedset>更改网站配置:<input name='url' type='text' disabled='disabled' value='"+url+"'/><br/>开始更新时间:<input name='starttime' type='text' value='"+getconfig(url,0)+"'/><br/>结束更新时间:<input name='endtime' type='text' value='"+getconfig(url,1)+"'/><br/>每天更新数量:<input name='upinterval' type='text' value='"+getconfig(url,2)+"'/><br/>发布篇/Ping: <input name='ping' type='text' value='"+getconfig(url,5)+"'/><br/>Sitemap地址: <input name='sitemap' type='text' value='"+getconfig(url,6)+"'/><br/><input type='submit' value='保存'/><input type='reset' value='取消' onclick='document.body.removeChild(document.getElementById(\"configbox\"))'/></from>";
+			}	
+			function updatesubmit(obj){
+				var url=obj.url.value;
+				var starttime=obj.starttime.value;
+				var endtime=obj.endtime.value;
+				var upinterval=obj.upinterval.value;
+				var ping=obj.ping.value;
+				var sitemap=obj.sitemap.value;
+				if(!storage.websites.match(url)){
+					alert("未知错误，网址不存在!");
+					return;
+				}
+				setconfig(url,0,starttime);
+				setconfig(url,1,endtime);
+				setconfig(url,2,upinterval);
+				setconfig(url,5,ping);
+				setconfig(url,6,sitemap);
+				window.location.reload();
+				return false;
+			}
+			//格式化时间函数，把设置的时间转换为时间戳，单位毫秒
+			function formattime(str){
+				var arr=str.split(/\D+/);
+				var hour=arr[0]||00;
+				var minutes=arr[1]||00;
+				var second=arr[3]||00;
+				var thattime=new Date();
+				thattime.setHours(hour);
+				thattime.setMinutes(minutes);
+				thattime.setSeconds(second);
+				return thattime.getTime();
+			}
+			//连接网站，生成文章
+			function  makehtml(url,callback){
+				//如果没到更新时间，则不更新
+				if(new Date().getTime()-formattime(getconfig(url,0))<0){
+					console.log("网站 "+url+" 不到更新时间，不予更新");
+					return false;
+					}else if(new Date().getTime()-formattime(getconfig(url,1))>0){
+					console.log("网站 "+url+" 更新时间已过，不予更新")
+					return false;
+					}else if(Number(getconfig(url,3))-Number(getconfig(url,2))>=0){
+					console.log("网站 "+url+" 已经更新完毕，不予更新")
+					return false;
+				}
+				var script=document.createElement("script");
+				//传送三个参数过去，密码，网站 已经更新文章的数量 回调函数
+				//返回已经更新的文章数量，剩余文章数量
+				script.id="remotedata";
+				var updated=getconfig(url,3);
+				var ping=(updated%getconfig(url,5)==0)?1:0;
+				script.src="http://"+url+"/create.php?pwd="+password+"&updated="+updated+"&url="+url+"&callback="+callback+"&ping="+ping+"&sitemap="+getconfig(url,6);
+				document.getElementsByTagName("head")[0].appendChild(script);
+			}
+			//显示状态更新数据:不刷新的情况下更新数据(已更新文章数和剩余文章数)
+			function displaydata(url,has,rest){
+				var list=document.getElementById("statusmsg").getElementsByTagName("tr");
+				for (var i=1;i<list.length;i++){
+					if(list[i].getElementsByTagName("a")[0].innerHTML==url){
+						var trindex=i;
+					}
+				}
+				list[trindex].getElementsByTagName("td")[4].innerHTML=has;
+				list[trindex].getElementsByTagName("td")[5].innerHTML=rest;
+			}
+			//更新成功之后，更改界面显示数据
+			//三个参数，url，已经更新文章数量，剩余文章数量
+			function updatestatu(url,has,rest,ping){
+				//存储数据更新
+				setconfig(url,3,has);	//已经更新数据
+				setconfig(url,4,rest);	//剩余数据
+				//显示状态更新
+				displaydata(url,has,rest);
+				//删除插入的js
+				document.getElementsByTagName("head")[0].removeChild(document.getElementById("remotedata"));
+				console.log("网站 "+url+" 更新成功，已更新"+has+"篇，剩余"+rest+"篇文章 "+ping);
+			}
+			//时间浮动功能,参数第一个是时间，第二个是浮动的百分比
+			function get_float(inttime,percent){
+				var sup=(percent+1)*100;
+				var sub=(1-percent)*100;
+				var randomtime=(Math.random()*(sup-sub)+sub)/100;
+				return inttime*randomtime;
+			}
+			//后台运行服务
+			function deamon(){
+				var websitesarr=storage.websites.split(",");
+				for (var i=0;i<websitesarr.length;i++){
+					(function(){var url=websitesarr[i];
+						//获取每次运行的间隔时间,单位毫秒
+						var interval=(formattime(getconfig(url,1))-new Date().getTime())/(getconfig(url,2)-getconfig(url,3));
+						interval=Math.ceil(interval);
+						setInterval(function(){
+							makehtml(url,"updatestatu");
+							interval=get_float(interval,0.2);
+					},interval);})(i);
+				}
+			}
+			//隔日清零功能
+			if(!storage.getItem("Date")){
+				var day=new Date().getDate();
+				storage.setItem("Date",day);
+				}else{
+				var day=new Date().getDate();
+				var storageday=storage.getItem("Date");
+				if(day!=storageday){
+					var list=storage.getItem("websites").split(",");
+					for (var i in list){
+						setconfig(list[i],3,0);
+					}
+					storage.setItem("Date",day);
+				}
+			}
+</script>
+</body>
+</html>
