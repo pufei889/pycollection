@@ -45,12 +45,13 @@ else if($action=='save'){
 	}
 	$_POST = array_map('str_fileter', $_POST);
 	//必须要的内容
-	$title=isset($_POST["post_title"])?addslashes(trim($_POST["post_title"])):"";
-	$category=isset($_POST["category"])?addslashes(trim($_POST["category"])):$category;
-	$body=isset($_POST["post_content"])?addslashes(trim($_POST["post_content"])):"";
+	$title=isset($_POST["post_title"])?trim($_POST["post_title"]):"";
+	$category=isset($_POST["category"])?trim($_POST["category"]):$category;
+	$body=isset($_POST["post_content"])?trim($_POST["post_content"]):"";
 	if($title=="") exit("发布失败，标题为空!");
 	if($category=="") exit("发布失败，栏目为空!");
 	if($body=="") exit("发布失败，内容为空!");
+    $title = addslashes($title);
     $body = addslashes(showimglist($body));
 	//非必须的内容
 	$shorttitle=isset($_POST["shorttitle"])?addslashes(trim($_POST["shorttitle"])):"";
