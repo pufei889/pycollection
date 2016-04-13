@@ -6,8 +6,8 @@ from urllib import quote
 from  xml.dom import  minidom
 
 class Yandex():
-    def __init__(self,query,page=1,lang="en",uname="hitoy2015",key="03.342224283:96c3252026935a65f6cc0475cedf3519"):
-        searchurl="https://yandex.com/search/xml?user=%s&key=%s&query=%s&l10n=%s&page=%s"%(uname,key,quote(query),lang,page)
+    def __init__(self,query,page=0):
+        searchurl="http://lab.hitoy.org/api/searchapi/yandex.php?q=%s&page=%s"%(quote(query),page)
         self.content = urllib2.urlopen(searchurl).read().replace("<hlword>","").replace("</hlword>","")
     
     def filter(self,ttag="h2",ctag="p"):

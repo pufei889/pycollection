@@ -145,7 +145,7 @@ while True:
                 
         elif engine == 'yandex':
             for i in range(count/10):
-                page = str(i+1)
+                page = str(i)
                 yanCo = yandex.Yandex(key,page)
                 post_content = post_content + yanCo.filter()
         elif engine == 'coccoc':
