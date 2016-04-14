@@ -86,8 +86,9 @@ if($pass!=passwd){
 		echo "console.log('全部文章生成完毕!')";
 		exit();
 	}
+    $sortrank = time();
 	$dsql->ExecuteNoneQuery("update `#@__arctiny` set arcrank=0 where id=$id");
-	$dsql->ExecuteNoneQuery("update `#@__archives` set arcrank=0,pubdate=\"$pubdate\" where id=$id");
+	$dsql->ExecuteNoneQuery("update `#@__archives` set arcrank=0,pubdate=\"$pubdate\",sortrank = \"$sortrank\" where id=$id");
 	$ac=new Archives($id);
 	$rurl=$ac->MakeHtml();
 	$ac->Close(); 
