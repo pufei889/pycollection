@@ -198,7 +198,6 @@ while True:
                 searchCo = search.Search(rurl,"https://www.search.com/")
                 post_content = post_content + searchCo.filter()
 
-        print post_content
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
