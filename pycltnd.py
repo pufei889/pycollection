@@ -152,44 +152,53 @@ while True:
         elif engine == 'yandex':
             for i in range(count/10):
                 page = str(i)
-                yanCo = yandex.Yandex(key,page)
+                rurl="http://lab.hitoy.org/api/searchapi/yandex.php?q=%s&page=%s"%(urllib.quote(key),page)
+                yanCo = yandex.Yandex(rurl,"https://www.hitoy.org/")
                 post_content = post_content + yanCo.filter()
+
         elif engine == 'coccoc':
             for i in range(count/10):
                 page  = str(i)
                 rurl = "http://coccoc.com/composer?q=%s&p=%s"%(urllib.quote(key),page)
                 coccocO = coccoc.Coccoc(rurl,"http://coccoc.com/search")
                 post_content = post_content + coccocO.filter()
+
         elif engine == 'izito':
             for i in range(count/10):
                 page = str(i+1)
                 rurl = "http://www.izito.com/?query=%s&pg=%s"%(urllib.quote(key),page)
                 izitoO = izito.Izito(rurl,"http://www.izito.com/")
                 post_content = post_content + izitoO.filter()
+
         elif engine == 'lycos':
             for i in range(count/10):
                 page = str(i+1)
                 rurl = "http://search.lycos.com/web/?q=%s&pn=%s"%(urllib.quote(key),page)
                 lycosO= lycos.Lycos(rurl,"http://search.lycos.com/")
                 post_content = post_content + lycosO.filter()
+
         elif engine == 'baidu':
             for i in range(count/10):
                 page = str(count - 10);
                 rurl = "https://www.baidu.com/s?wd=%s&pn=%s"%(urllib.quote(key),page)
                 baiduO= baidu.Baidu(rurl,"https://www.baidu.com/")
                 post_content = post_content + baiduO.filter()
+
         elif engine == 'haosou':
             for i in range(count/10):
                 page = str(i+1)
                 rurl = "https://www.so.com/s?q=%s&pn=%s"%(urllib.quote(key),page)
                 haosouO= haosou.So(rurl,"https://www.so.com")
                 post_content = post_content + haosouO.filter()
+
         elif engine == 'search':
             for i in range(count/10):
                 page = str(i+1)
                 rurl = "https://www.search.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 searchCo = search.Search(rurl,"https://www.search.com/")
                 post_content = post_content + searchCo.filter()
+
+        print post_content
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
@@ -199,7 +208,7 @@ while True:
     if (post_content and len(post_content) > 10 ):
         try:
             pl="%s?action=save&secret=yht123hito"%posturl
-            result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip()
+            result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip().lstrip("\xef\xbb\xbf")
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),result.decode("utf-8")))
         except Exception,e:
 			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),'publish Failure',e))
