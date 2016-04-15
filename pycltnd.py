@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search
 
 sysnote="""
 Author	Hito
@@ -70,6 +70,8 @@ elif ("getbaidu" in arguments):
     engine = 'baidu'
 elif ("gethaosou" in arguments):
     engine = 'haosou'
+elif ("getsearch" in arguments):
+    engine = 'search'
 else:
     engine = 'yahoo'
 
@@ -178,6 +180,12 @@ while True:
                 rurl = "https://www.so.com/s?q=%s&pn=%s"%(urllib.quote(key),page)
                 haosouO= haosou.So(rurl,"https://www.so.com")
                 post_content = post_content + haosouO.filter()
+        elif engine == 'search':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "https://www.search.com/web?q=%s&page=%s"%(urllib.quote(key),page)
+                searchCo = search.Search(rurl,"https://www.search.com/")
+                post_content = post_content + searchCo.filter()
         time.sleep(interval)
     except KeyboardInterrupt:
         sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
