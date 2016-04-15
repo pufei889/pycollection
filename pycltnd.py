@@ -4,9 +4,11 @@
 import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search
 
 sysnote="""
-Author	Hito
-Blog	https://www.hitoy.org/
-Update	2016.04.06
+========================================================
+==           Simulation acquisition system            ==
+==    Copyright: 2016 Hito(https://www.hitoy.org/)    ==
+==         Version: 0.9    Update: 2016.04.15         ==
+========================================================
 """
 sys.stdout.write(sysnote)
 """
@@ -74,6 +76,8 @@ elif ("getsearch" in arguments):
     engine = 'search'
 else:
     engine = 'yahoo'
+
+sys.stdout.write("Use engine: %s\n\n"%engine)
 
 try:
     keyhd=open(keyfile,'rb')
