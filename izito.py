@@ -25,4 +25,7 @@ class Izito(Collection):
             return artice
 
 if __name__ == "__main__":
+    a = Izito("http://www.izito.com/?vid=l21828140190I1460943666&sess=a3a3a303a3a313&template=&asid=1810073229&awc=&de=&nwc=&suggest=1&q=steam+boilers")
+    print a.content
+    print a.filter()
     sys.exit()

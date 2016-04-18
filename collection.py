@@ -12,7 +12,7 @@ class Collection:
         self.__get_content(url)
 
     def __get_content(self,url):
-        header = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Encoding":"gzip, identity","Accept-Language":"en-US,en;q=0.8","Connection":"keep-alive","User-Agent":self.__ua,"Referer":self.__referer}
+        header = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Encoding":"gzip, identity","Accept-Language":"en-US,en;q=0.8","Cache-Control":"max-age=0","Connection":"keep-alive","User-Agent":self.__ua,"Referer":self.__referer}
         try:
             req = urllib2.Request(url,headers=header)
             page = urllib2.urlopen(req,timeout=10)

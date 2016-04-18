@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo
 
 sysnote="""
 ========================================================
 ==           Simulation acquisition system            ==
 ==    Copyright: 2016 Hito(https://www.hitoy.org/)    ==
-==         Version: 0.9    Update: 2016.04.15         ==
+==         Version: 0.9    Update: 2016.04.18         ==
 ========================================================
 """
 sys.stdout.write(sysnote)
@@ -74,6 +74,8 @@ elif ("gethaosou" in arguments):
     engine = 'haosou'
 elif ("getsearch" in arguments):
     engine = 'search'
+elif ("getduckgo" in arguments):
+    engine = 'duckgo'
 else:
     engine = 'yahoo'
 
@@ -197,6 +199,11 @@ while True:
                 rurl = "https://www.search.com/web?q=%s&page=%s"%(urllib.quote(key),page)
                 searchCo = search.Search(rurl,"https://www.search.com/")
                 post_content = post_content + searchCo.filter()
+
+        elif engine == 'duckgo':
+            rurl = "https://duckduckgo.com/d.js?q="%(urllib.quote(key))
+            duckCo = duckgo.Duckgo(rurl,"https://duckduckgo.com/")
+            post_content = post_content + duckCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
