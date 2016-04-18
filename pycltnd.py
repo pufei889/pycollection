@@ -201,7 +201,7 @@ while True:
                 post_content = post_content + searchCo.filter()
 
         elif engine == 'duckgo':
-            rurl = "https://duckduckgo.com/d.js?q="%(urllib.quote(key))
+            rurl = "https://duckduckgo.com/d.js?q=%s"%(urllib.quote(key))
             duckCo = duckgo.Duckgo(rurl,"https://duckduckgo.com/")
             post_content = post_content + duckCo.filter()
 
