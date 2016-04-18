@@ -211,15 +211,23 @@ while True:
         break
 
     ##POST CONTENT
-    if (post_content and len(post_content) > 10 ):
+    if (post_content and len(post_content) > 20 ):
         try:
             pl="%s?action=save&secret=yht123hito"%posturl
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip().lstrip("\xef\xbb\xbf")
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),result.decode("utf-8")))
+        except KeyboardInterrupt:
+            sys.stdout.write(("[%s] - %s\n")%(time.ctime(),"Exit: User termination"))
+            break
+        except UnicodeEncodeError,e:
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
         except Exception,e:
-			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),'publish Failure',e))
+			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),"publish Failure",e))
     else:
-        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),"Collection Failure"))
+        try:
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),"Collection Failure"))
+        except UnicodeEncodeError,e:
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
 
     sys.stdout.flush()
 #close
