@@ -28,8 +28,6 @@ class Collection:
         else:
             self.content=body.strip()
 
-
-
 def gz_decoding(data):
     compressedstream = StringIO.StringIO(data)  
     gziper = gzip.GzipFile(fileobj=compressedstream)    

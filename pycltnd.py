@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru
 
 sysnote="""
 ========================================================
@@ -76,6 +76,8 @@ elif ("getsearch" in arguments):
     engine = 'search'
 elif ("getduckgo" in arguments):
     engine = 'duckgo'
+elif ("getmailru" in arguments):
+    engine = 'mailru'
 else:
     engine = 'yahoo'
 
@@ -204,6 +206,13 @@ while True:
             rurl = "https://duckduckgo.com/d.js?q=%s"%(urllib.quote(key))
             duckCo = duckgo.Duckgo(rurl,"https://duckduckgo.com/")
             post_content = post_content + duckCo.filter()
+
+        elif engine == 'mailru':
+            for i in range(count/10):
+                page = str(i*10)
+                rurl = "http://go.mail.ru/api/v1/web_search?q=%s&sf=%s"%(urllib.quote(key),page)
+                mailruCo = mailru.Mailru(rurl)
+                post_content = post_content + mailruCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
