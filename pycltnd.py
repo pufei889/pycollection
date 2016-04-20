@@ -7,7 +7,7 @@ sysnote="""
 ========================================================
 ==           Simulation acquisition system            ==
 ==    Copyright: 2016 Hito(https://www.hitoy.org/)    ==
-==         Version: 0.9    Update: 2016.04.18         ==
+==         Version: 0.9.1    Update: 2016.04.20       ==
 ========================================================
 """
 sys.stdout.write(sysnote)
