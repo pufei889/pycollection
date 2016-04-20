@@ -231,7 +231,10 @@ while True:
         except UnicodeEncodeError,e:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
         except Exception,e:
-			sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),"publish Failure",e))
+            try:
+			    sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key.decode("utf-8"),"publish Failure",e))
+            except UnicodeEncodeError:
+			    sys.stdout.write(("[%s] - %s - %s:%s\n")%(time.ctime(),key,"publish Failure",e))
     else:
         try:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key.decode("utf-8"),"Collection Failure"))
