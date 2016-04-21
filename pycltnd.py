@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru,sogou
 
 sysnote="""
 ========================================================
 ==           Simulation acquisition system            ==
 ==    Copyright: 2016 Hito(https://www.hitoy.org/)    ==
-==         Version: 0.9.1    Update: 2016.04.20       ==
+==         Version: 0.9.2    Update: 2016.04.21       ==
 ========================================================
 """
 sys.stdout.write(sysnote)
@@ -78,6 +78,8 @@ elif ("getduckgo" in arguments):
     engine = 'duckgo'
 elif ("getmailru" in arguments):
     engine = 'mailru'
+elif ("getsogou" in arguments):
+    engine = 'sogou'
 else:
     engine = 'yahoo'
 
@@ -213,6 +215,13 @@ while True:
                 rurl = "http://go.mail.ru/api/v1/web_search?q=%s&sf=%s"%(urllib.quote(key),page)
                 mailruCo = mailru.Mailru(rurl)
                 post_content = post_content + mailruCo.filter()
+
+        elif engine == 'sogou':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "https://www.sogou.com/web?query=%s&page=%s"%(urllib.quote(key),page)
+                sogouCo = sogou.Sogou(rurl)
+                post_content = post_content + sogouCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
