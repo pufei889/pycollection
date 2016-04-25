@@ -35,7 +35,7 @@ if(isset($_FILES['key'])){
     $newkeyfile = $__dir__."/".time().".txt";
     move_uploaded_file($key['tmp_name'],$newkeyfile);
     chdir("../");
-    setcookie("starttime",time(),time()+43200,"/");
+    setcookie("starttime",time(),time()+3600,"/");
     exec("./pycltnd.py -u $u -t $t -c $c $s -k $newkeyfile -d");
     echo "<script>window.location.reload();</script>";
     exit();
