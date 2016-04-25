@@ -7,7 +7,7 @@ $__dir__ = dirname(__FILE__);
 if(!isset($_SERVER['PHP_AUTH_USER'])){
     header('WWW-Authenticate: Basic realm="My Realm"');
     header('HTTP/1.0 401 Unauthorized');
-    echo 'Text to send if user hits Cancel button';
+    echo '未经过认证!';
     exit();
 }else if($_SERVER['PHP_AUTH_USER'] != $username ||$_SERVER['PHP_AUTH_PW'] != $password){
     exit("用户名密码错误，请重新输入!");
