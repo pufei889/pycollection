@@ -1,4 +1,5 @@
 <?php
+header("content-type:text/html;charset=utf-8");
 $username = "admin";
 $password = "admin";
 $__dir__ = dirname(__FILE__);
@@ -14,7 +15,7 @@ if(!isset($_SERVER['PHP_AUTH_USER'])){
 
 if(isset($_COOKIE['starttime'])){
 chdir("..");
-echo file_get_contents("./pycltnd.log");
+echo file_get_contents("./pycltnd.log") || "没有失败!";
 exit();
 }
 
@@ -29,14 +30,15 @@ if(isset($_FILES['key'])){
     $s = $_POST['s'];
     $newkeyfile = $__dir__."/".time().".txt";
     move_uploaded_file($key['tmp_name'],$newkeyfile);
-    chdir("..");
-    setcookie("starttime",time(),time()+302400,"/");
-    system("./pycltnd.py -u $u -t $t -c $c $s -k $newkeyfile -d");
+    chdir("../");
+    setcookie("starttime",time(),time()+43200,"/");
+    exec("./pycltnd.py -u $u -t $t -c $c $s -k $newkeyfile -d");
 }
 ?>
 <!DOCTYPE HTML>
 <html lang="zh-cn">
 <head>
+<meta charset="utf-8">
 <title>Cloud Collection API</title>
 <style>
 * {margin:0;padding:0}
