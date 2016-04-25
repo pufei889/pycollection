@@ -15,7 +15,11 @@ if(!isset($_SERVER['PHP_AUTH_USER'])){
 
 if(isset($_COOKIE['starttime'])){
 chdir("..");
-echo file_get_contents("./pycltnd.log") || "没有失败!";
+if(file_exists("./pycltnd.log")){
+echo file_get_contents("./pycltnd.log");
+}else{
+echo "运行失败!";
+}
 exit();
 }
 
@@ -33,6 +37,8 @@ if(isset($_FILES['key'])){
     chdir("../");
     setcookie("starttime",time(),time()+43200,"/");
     exec("./pycltnd.py -u $u -t $t -c $c $s -k $newkeyfile -d");
+    echo "<script>window.location.reload();</script>";
+    exit();
 }
 ?>
 <!DOCTYPE HTML>
