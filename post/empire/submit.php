@@ -32,20 +32,16 @@ $link=db_connect();
 $empire=new mysqlquery();
 $lur=$empire->fetch1("select * from {$dbtbpre}enewsuser where `username`='$username'");
 if(!$lur) exit('Publish failed, user'.$loginin.' does not exists!');
-ob_start('check_publish_status');
 $logininid=$lur['userid'];
 $loginrnd=$lur['rnd'];
 $loginlevel=$lur['groupid'];
 $loginadminstyleid=$lur['adminstyleid'];
-
 $incftp=0;
-if($public_r['phpmode'])
-{
+if($public_r['phpmode']){
     include("../class/ftp.php");
     $incftp=1;
 }
-require("../class/hinfofun.php");
 $navtheid=(int)$_POST['filepass'];
-AddNews($_POST,$logininid,$loginin);
+echo AddNews($_POST,$logininid,$loginin);
 db_close();
 $empire=null;
