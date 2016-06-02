@@ -36,6 +36,7 @@ $logininid=$lur['userid'];
 $loginrnd=$lur['rnd'];
 $loginlevel=$lur['groupid'];
 $loginadminstyleid=$lur['adminstyleid'];
+
 $incftp=0;
 if($public_r['phpmode']){
     include("../class/ftp.php");
