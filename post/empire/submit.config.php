@@ -12,6 +12,7 @@ $webname = "Powered By https://www.hitoy.org"; //设置网站名称
 /*下面的配置不是必须的，请根据需要改动*/
 $_POST['title'] = $_POST['post_title'];
 $_POST['newstext'] = $_POST['post_content'];
+$_POST['newstempid'] = 0;  //模板编号,使用默认模板为0，否则请改为系统当中已经存在的模板
 $_POST['news'] = 'AddNews';
 $_POST['bclassid'] = '2';
 $_POST['id'] = '0';
@@ -30,7 +31,6 @@ $_POST['befrom'] = "";  //信息来源
 $_POST['titlefont'] = array();  //标题样式：bis
 $_POST['isgood'] = "0";  //推荐
 $_POST['firsttitle'] = "0";  //头条
-$_POST['newstempid'] = 1;  //模板编号
 $_POST['copyimg'] = 1;  //远程保存图片
 $_POST['mark'] = 1;  //图片加水印
 $_POST['getfirsttitlepic'] = 1;  //取第1张上传图为标题图片
