@@ -48,7 +48,7 @@ $_POST['userfen'] = 0;  //查看扣除点数
 $_POST['closepl'] = 1;  //关闭评论
 $_POST['filenameqz'] = '';  //文件前缀
 $_POST['ztid'] = array();  //所属专题ID
-$_POST['onclick'] = 200;  //最大点击数，点击数将取1到最大点击数的随机值；
+$_POST['onclick'] = rand(10,300);  //最大点击数，点击数将取1到最大点击数的随机值；
 
 
 /**请不要改变下面的代码**/
