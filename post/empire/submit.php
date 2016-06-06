@@ -1,7 +1,6 @@
 <?php
 if(!isset($_GET['secret']) || $_GET['secret'] != 'yht123hito') exit("Publish failed, password error!");
 define('EmpireCMSAdmin','1');
-require("./submit.config.php");
 require("../class/connect.php");
 require("../class/db_sql.php");
 require("../class/functions.php");
@@ -27,6 +26,7 @@ if(isset($_GET['action'])&&$_GET['action'] == "list"){
     }
     exit();
 }
+require("./submit.config.php");
 if(!isset($_GET['action']) || $_GET['action'] != "save" || !isset($_POST)) exit("Prohibited"); 
 $link=db_connect();
 $empire=new mysqlquery();

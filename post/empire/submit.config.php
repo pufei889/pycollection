@@ -59,26 +59,7 @@ function rpc_ping($webname,$weburl,$updateurl,$rss){
         return "Ping failure, No Curl Extension!";
     }
     global $hosts;
-    $xml = <<<EOT
-<?xml version="1.0"?>
-<methodCall>
-  <methodName>weblogUpdates.extendedPing</methodName>
-  <params>
-    <param>
-      <value><string>$webname</string></value>
-    </param>
-    <param>
-      <value><string>$weburl</string></value>
-    </param>
-    <param>
-      <value><string>$updateurl</string></value>
-    </param>
-    <param>
-      <value><string>$rss</string></value>
-    </param>
-  </params>
-</methodCall>
-EOT;
+    $xml ="<?xml version=\"1.0\"?><methodCall><methodName>weblogUpdates.extendedPing</methodName><params><param><value><string>$webname</string></value></param><param><value><string>$weburl</string></value></param><param><value><string>$updateurl</string></value></param><param><value><string>$rss</string></value></param></params></methodCall>";
     foreach($hosts as $target){
         $ch = curl_init(); 
         $target=trim($target);
