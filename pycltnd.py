@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru,sogou
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru,sogou,entireweb,gmx
 
 sysnote="""
 ========================================================
@@ -52,6 +52,7 @@ if ( "-c" in arguments ):
     except:
         count = 20
 
+
 if ("getask" in arguments):
     engine = 'ask'
 elif ("getbing" in arguments):
@@ -80,6 +81,10 @@ elif ("getmailru" in arguments):
     engine = 'mailru'
 elif ("getsogou" in arguments):
     engine = 'sogou'
+elif ("getentireweb" in arguments):
+    engine =  'entireweb'
+elif ("getgmx" in arguments):
+    engine = 'gmx'
 else:
     engine = 'yahoo'
 
@@ -220,8 +225,22 @@ while True:
             for i in range(count/10):
                 page = str(i+1)
                 rurl = "https://www.sogou.com/web?query=%s&page=%s"%(urllib.quote(key),page)
-                sogouCo = sogou.Sogou(rurl)
+                sogouCo = sogou.Sogou(rurl,"https://www.sogou.com")
                 post_content = post_content + sogouCo.filter()
+
+        elif engine == 'entireweb':
+            for i in range(count/10):
+                page = str(i*20+1)
+                rurl = "http://entireweb.com/web/?q=%s&of=%s&md=web&ts=%s&gs=jH67TuiGrF68u#"%(urllib.quote(key),page,str(time.time()*1000))
+                entirewebCo = entireweb.Entrieweb(rurl,"http://entireweb.com")
+                post_content = post_content +  entirewebCo.filter()
+
+        elif engine  == 'gmx':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "https://search.gmx.com/web?origin=serp_sf_atf&q=%s&pageIndex=%s"%(urllib.quote(key),page)
+                gmxCo = gmx.Gmx(rurl,"https://www.gmx.com/")
+                post_content = post_content + gmxCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:
