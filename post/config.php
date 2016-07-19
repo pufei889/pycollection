@@ -1,18 +1,18 @@
 <?php
 /*    WordPress 发布接口，可以配合火车头采集器使用 
 
-	  本接口是在rq204的接口上完善实现，主要增加以下功能：
+      本接口是在rq204的接口上完善实现，主要增加以下功能：
 
-	  1.  随机时间安排与预约发布功能： 可以设定发布时间以及启用预约发布功能
-	  2. 服务器时间与博客时间的时区差异处理。这特别适合在国外服务器上的博客
-	  3. 永久链接的自动翻译设置。根据标题自动翻译为英文并进行seo处理
-	  4. 增加了对分类catagory的处理
-	  5. 多标签处理(多个标签可以用火车头默认的tag|||tag2|||tag3的形式)
-	  6.增加了发文后ping功能
-	  7.增加了“pending review”的设置
+      1.  随机时间安排与预约发布功能： 可以设定发布时间以及启用预约发布功能
+      2. 服务器时间与博客时间的时区差异处理。这特别适合在国外服务器上的博客
+      3. 永久链接的自动翻译设置。根据标题自动翻译为英文并进行seo处理
+      4. 增加了对分类catagory的处理
+      5. 多标签处理(多个标签可以用火车头默认的tag|||tag2|||tag3的形式)
+      6.增加了发文后ping功能
+      7.增加了“pending review”的设置
 
-	使用步骤 ：
-	1. 修改下面的发布参数，并将hm-locywp文件夹上传到服务器上Wordpress的根目录。
+    使用步骤 ：
+    1. 修改下面的发布参数，并将hm-locywp文件夹上传到服务器上Wordpress的根目录。
 
  */
 $postStatus     = "publish"; 			//"future","publish","pending"  预约发布 立即发布 暂不发布
@@ -27,15 +27,15 @@ $secretWord     = "yht123hito"; 			//接口验证密码请不要更改 更改后
 //同义词替换功能 (区分大小写,关键词库用word.txt表示)
 function strtr_words($str)
 {
-$words=array();
-$key_list = file("word.txt");
-foreach($key_list as $k=>$v)
-{
-$str_data = explode(",",$v);//关键词分割符
-$w1=trim($str_data[0])." ";
-$w2=trim($str_data[1])." ";
-$words+=array("$w1"=>"$w2","$w2"=>"$w1");
-}
-return strtr($str,$words);//返回结果
+    $words=array();
+    $key_list = file("word.txt");
+    foreach($key_list as $k=>$v)
+    {
+        $str_data = explode(",",$v);//关键词分割符
+        $w1=trim($str_data[0])." ";
+        $w2=trim($str_data[1])." ";
+        $words+=array("$w1"=>"$w2","$w2"=>"$w1");
+    }
+    return strtr($str,$words);//返回结果
 }
 ?>
