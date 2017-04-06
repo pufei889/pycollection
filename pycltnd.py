@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #author Hito http://www.hitoy.org/
-import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru,sogou,entireweb,gmx
+import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,izito,lycos,baidu,haosou,search,duckgo,mailru,sogou,entireweb,gmx,re
 
 sysnote="""
 ========================================================
@@ -51,6 +51,12 @@ if ( "-c" in arguments ):
         count = int(arguments[c])
     except:
         count = 20
+if ("-r" in arguments ):
+    try:
+        replacefile = open(arguments[arguments.index("-r")+1],"rb")
+    except Exception,e:
+        sys.stdout.write("%s\n"%e)
+        sys.exit()
 
 
 if ("getask" in arguments):
@@ -87,6 +93,18 @@ elif ("getgmx" in arguments):
     engine = 'gmx'
 else:
     engine = 'yahoo'
+
+
+replacere = re.compile(r"^([^\|]*)\|(.*)$",re.I|re.S)
+def key_replace(content,filefd):
+    line = filefd.readline()
+    while(line):
+        find = replacere.search(line).group(1).strip()
+        replace = replacere.search(line).group(2).strip()
+        if find and replace:
+            content = content.replace(find,replace)
+        line = filefd.readline()
+    return content
 
 sys.stdout.write("Use engine: %s\n\n"%engine)
 
@@ -249,6 +267,7 @@ while True:
 
     ##POST CONTENT
     if (post_content and len(post_content) > 20 ):
+        post_content = key_replace(post_content)
         try:
             pl="%s?action=save&secret=yht123hito"%posturl
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip().lstrip("\xef\xbb\xbf")
