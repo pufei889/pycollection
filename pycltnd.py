@@ -27,6 +27,7 @@ keyfile = "./key.txt"
 arguments = sys.argv
 count=20
 interval = 10
+replacefile = False
 if ( "-u" in arguments ):
     u = arguments.index("-u")+1
     posturl = arguments[u]
@@ -267,7 +268,8 @@ while True:
 
     ##POST CONTENT
     if (post_content and len(post_content) > 20 ):
-        post_content = key_replace(post_content)
+        if replacefile:
+            post_content = key_replace(post_content,replacefile)
         try:
             pl="%s?action=save&secret=yht123hito"%posturl
             result=post.POST(pl,{"post_title":key,"post_content":post_content}).strip().lstrip("\xef\xbb\xbf")
