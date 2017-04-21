@@ -14,6 +14,8 @@ class Yahoo(Collection):
             try:
                 title = h3.search(i).group(1) if h3.search(i) else ''
                 content = abstr.search(i).group(1) if abstr.search(i) else ''
+                if title == "" or content == "":
+                    continue
                 title = "<"+ttag+">"+re.sub(r'<[^>]+>','',title)+"</"+ttag+">\n"
                 content = "<"+ctag+">"+re.sub(r'<[^>]+>','',content)+"</"+ctag+">\n"
                 artice = artice + title + content

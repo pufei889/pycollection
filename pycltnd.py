@@ -6,8 +6,8 @@ import os,sys,time,urllib,signal,post,yahoo,ask,bing,wow,ecosia,yandex,coccoc,iz
 sysnote="""
 ========================================================
 ==           Simulation acquisition system            ==
-==    Copyright: 2016 Hito(https://www.hitoy.org/)    ==
-==         Version: 0.9.2    Update: 2016.04.21       ==
+==    Copyright: 2017 Hito(https://www.hitoy.org/)    ==
+==         Version: 0.9.3    Update: 2017.04.21       ==
 ========================================================
 """
 sys.stdout.write(sysnote)
@@ -52,9 +52,17 @@ if ( "-c" in arguments ):
         count = int(arguments[c])
     except:
         count = 20
+
 if ("-r" in arguments ):
     try:
         replacefile = open(arguments[arguments.index("-r")+1],"rb")
+    except Exception,e:
+        sys.stdout.write("%s\n"%e)
+        sys.exit()
+
+elif (os.path.exists(os.getcwd()+'/replace.txt')):
+    try:
+        replacefile = open(os.getcwd()+'/replace.txt',"rb")
     except Exception,e:
         sys.stdout.write("%s\n"%e)
         sys.exit()
@@ -96,13 +104,13 @@ else:
     engine = 'yahoo'
 
 
-replacere = re.compile(r"^([^\|]*)\|(.*)$",re.I|re.S)
+replacere = re.compile(r"^([^\|]*)\|(.*)?$",re.I|re.S)
 def key_replace(content,filefd):
     line = filefd.readline()
     while(line):
         find = replacere.search(line).group(1).strip()
         replace = replacere.search(line).group(2).strip()
-        if find and replace:
+        if find:
             content = content.replace(find,replace)
         line = filefd.readline()
     return content
@@ -143,42 +151,23 @@ while True:
     key=key.strip().lstrip("\xef\xbb\xbf")
     if len(key) == 0: continue
     post_content = ''
-
     try:
         ## GET CONTENT
         if engine == 'yahoo':
-            rurl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
-            YaCo=yahoo.Yahoo(rurl,'https://www.yahoo.com/')
-            post_content = YaCo.filter()
-
-        elif engine == 'wow':
+            b=0
             for i in range(count/10):
-                page = str(i)
-                rurl="http://www.wow.com/search?q=%s&page=%s"%(urllib.quote(key),page)
-                WoCo=wow.Wow(rurl,'http://www.wow.com/')
-                post_content = post_content + WoCo.filter()
-
-        elif engine == 'ask':
-            for i in range(count/10):
-                page = str(i)
-                rurl="http://www.ask.com/web?q=%s&page=%s"%(urllib.quote(key),page)
-                AsCo=ask.Ask(rurl,'http://www.ask.com/')
-                post_content = post_content + AsCo.filter()
+                rurl="https://search.yahoo.com/search?p=%s&b=%d"%(urllib.quote(key),b)
+                YaCo=yahoo.Yahoo(rurl,'https://www.yahoo.com/')
+                post_content = post_content + YaCo.filter()
+                b = post_content.count("<h2>")
 
         elif engine == 'bing':
             for i in range(count/10):
-                page = str(i+1)
-                rurl="http://www.bing.com/search?q=%s&first=%s"%(urllib.quote(key),page)
+                page = i*10+1
+                rurl="http://www.bing.com/search?q=%s&first=%d"%(urllib.quote(key),page)
                 YaCo=bing.Bing(rurl,'http://www.bing.com/')
-                post_content = post_content + YaCo.filter()
+                post_content = post_content + YaCo.filter()    
 
-        elif engine == 'ecosia':
-            for i in range(count/10):
-                page = str(i)
-                rurl="https://www.ecosia.org/search?p=%s&q=%s"%(page,urllib.quote(key))
-                EcCo=ecosia.Ecosia(rurl,'https://www.ecosia.org/')
-                post_content = post_content + EcCo.filter()
-                
         elif engine == 'yandex':
             for i in range(count/10):
                 page = str(i)
@@ -186,40 +175,32 @@ while True:
                 yanCo = yandex.Yandex(rurl,"https://www.hitoy.org/")
                 post_content = post_content + yanCo.filter()
 
+        elif engine == 'wow':
+            for i in range(count/10):
+                page = i+1
+                rurl="http://search.wow.com/search?q=%s&page=%d"%(urllib.quote(key),page)
+                WoCo=wow.Wow(rurl,'http://www.wow.com/')
+                post_content = post_content + WoCo.filter()
+
+        elif engine == 'ask':
+            for i in range(count/10):
+                page = i+1
+                rurl="http://www.ask.com/web?q=%s&page=%d&qo=moreResults"%(urllib.quote(key),page)
+                AsCo=ask.Ask(rurl,'http://www.ask.com/')
+                post_content = post_content + AsCo.filter()
+
+        elif engine == 'ecosia':
+            for i in range(count/10):
+                page = str(i)
+                rurl="https://www.ecosia.org/search?p=%s&q=%s"%(page,urllib.quote(key))
+                EcCo=ecosia.Ecosia(rurl,'https://www.ecosia.org/')
+                post_content = post_content + EcCo.filter()
+
         elif engine == 'coccoc':
             for i in range(count/10):
-                page  = str(i)
-                rurl = "http://coccoc.com/composer?q=%s&p=%s"%(urllib.quote(key),page)
+                rurl = "http://coccoc.com/composer?q=%s&p=%d"%(urllib.quote(key),i)
                 coccocO = coccoc.Coccoc(rurl,"http://coccoc.com/search")
                 post_content = post_content + coccocO.filter()
-
-        elif engine == 'izito':
-            for i in range(count/10):
-                page = str(i+1)
-                rurl = "http://www.izito.com/?query=%s&pg=%s"%(urllib.quote(key),page)
-                izitoO = izito.Izito(rurl,"http://www.izito.com/")
-                post_content = post_content + izitoO.filter()
-
-        elif engine == 'lycos':
-            for i in range(count/10):
-                page = str(i+1)
-                rurl = "http://search.lycos.com/web/?q=%s&pn=%s"%(urllib.quote(key),page)
-                lycosO= lycos.Lycos(rurl,"http://search.lycos.com/")
-                post_content = post_content + lycosO.filter()
-
-        elif engine == 'baidu':
-            for i in range(count/10):
-                page = str(count - 10);
-                rurl = "https://www.baidu.com/s?wd=%s&pn=%s"%(urllib.quote(key),page)
-                baiduO= baidu.Baidu(rurl,"https://www.baidu.com/")
-                post_content = post_content + baiduO.filter()
-
-        elif engine == 'haosou':
-            for i in range(count/10):
-                page = str(i+1)
-                rurl = "https://www.so.com/s?q=%s&pn=%s"%(urllib.quote(key),page)
-                haosouO= haosou.So(rurl,"https://www.so.com")
-                post_content = post_content + haosouO.filter()
 
         elif engine == 'search':
             for i in range(count/10):
@@ -239,14 +220,7 @@ while True:
                 rurl = "http://go.mail.ru/api/v1/web_search?q=%s&sf=%s"%(urllib.quote(key),page)
                 mailruCo = mailru.Mailru(rurl)
                 post_content = post_content + mailruCo.filter()
-
-        elif engine == 'sogou':
-            for i in range(count/10):
-                page = str(i+1)
-                rurl = "https://www.sogou.com/web?query=%s&page=%s"%(urllib.quote(key),page)
-                sogouCo = sogou.Sogou(rurl,"https://www.sogou.com")
-                post_content = post_content + sogouCo.filter()
-
+        
         elif engine == 'entireweb':
             for i in range(count/10):
                 page = str(i*20+1)
@@ -260,6 +234,27 @@ while True:
                 rurl = "https://search.gmx.com/web?origin=serp_sf_atf&q=%s&pageIndex=%s"%(urllib.quote(key),page)
                 gmxCo = gmx.Gmx(rurl,"https://www.gmx.com/")
                 post_content = post_content + gmxCo.filter()
+
+        elif engine == 'baidu':
+            for i in range(count/10):
+                page = str(count - 10);
+                rurl = "https://www.baidu.com/s?wd=%s&pn=%s"%(urllib.quote(key),page)
+                baiduO= baidu.Baidu(rurl,"https://www.baidu.com/")
+                post_content = post_content + baiduO.filter()
+
+        elif engine == 'haosou':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "https://www.so.com/s?q=%s&pn=%s"%(urllib.quote(key),page)
+                haosouO= haosou.So(rurl,"https://www.so.com")
+                post_content = post_content + haosouO.filter()
+
+        elif engine == 'sogou':
+            for i in range(count/10):
+                page = str(i+1)
+                rurl = "https://www.sogou.com/web?query=%s&page=%s"%(urllib.quote(key),page)
+                sogouCo = sogou.Sogou(rurl,"https://www.sogou.com")
+                post_content = post_content + sogouCo.filter()
 
         time.sleep(interval)
     except KeyboardInterrupt:

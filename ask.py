@@ -5,9 +5,9 @@ import re,sys
 
 class Ask(Collection):
     def filter(self,ttag="h2",ctag="p"):
-        pas = re.compile(r"<div\sclass=\"web-result\sur\stsrc_tled[^>]*>([\s\S]*?)<\/div>",re.I|re.M)
-        h3 = re.compile(r"<h2[^>]+>([\s\S]*?)<\/h2>",re.I|re.M)
-        abstr = re.compile(r"<p[\s]class=\"web-result-description\">([\s\S]*?)<\/p>",re.I|re.M)
+        pas = re.compile(r"<div class=\"PartialSearchResults-item\" data-zen=\"true\">([\s\S]*?)<\/div>[\r\n]{6}",re.I|re.M)
+        h3 = re.compile(r"<a[^>]+>([\s\S]*?)<\/a>",re.I|re.M)
+        abstr = re.compile(r"<p class=\"PartialSearchResults-item-abstract\">([\s\S]*?)<\/p>",re.I|re.M)
         f = pas.findall(self.content)
         if not f: return ""
         artice = ""
@@ -15,6 +15,8 @@ class Ask(Collection):
             try:
                 title = h3.search(i).group(1).strip() if h3.search(i) else ''
                 content = abstr.search(i).group(1).strip() if abstr.search(i) else ''
+                if title == "" or content == "":
+                    continue
                 title = "<"+ttag+">"+re.sub('<[^>]+>','',title)+"</"+ttag+">\n"
                 content = "<"+ctag+">"+re.sub(r'[\r\n]*','',re.sub(r'^\d+[\w\s]*...','',re.sub('<[^>]+>','',content)))+"</"+ctag+">\n"
                 artice = artice + title + content

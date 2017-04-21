@@ -1,5 +1,5 @@
 <?php
-include "../wp-config.php"; //这里是引用原来的数据库文件.
+include "../wp-config.php"; //这里是引用原来的数据库文�?
 include "./config.php"; 
 if( !class_exists("MySql") )	require_once ("mysql-class.php");
 if($pingAfterPost) require_once("../wp-includes/comment.php");
@@ -21,7 +21,7 @@ function hm_tranlate($text){
 	return $htmlret;
 }
 
-$DB = new MySql(DB_HOST, DB_USER, DB_PASSWORD,DB_NAME);//初始化数据库类
+$DB = new MySql(DB_HOST, DB_USER, DB_PASSWORD,DB_NAME);//初始化数据库�?
 
 if(isset($_GET['action'])&&$_GET['action'] == "list")
 {
@@ -31,8 +31,12 @@ if(isset($_GET['action'])&&$_GET['action'] == "list")
 	{
 	echo '<<<'.$config['term_id'].'--'.$config['name'].'>>>';	
 	}
+}else if($_GET['action']=='modifiepostdate'){
+    ignore_user_abort();
+    ini_set('max_execution_time','0');
+    changepostdate(6);
 }
-elseif(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secret'])&&$_GET['secret'] == $secretWord*/)
+else if(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secret'])&&$_GET['secret'] == $secretWord*/)
 {
 	$comment_count=0;
 	$menu_order=0;
@@ -44,6 +48,8 @@ elseif(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secret
 	if($post_category =='[分类id]'|| $post_category==''){$post_category=0;};
 	if($tag=='[标签:SY_tag]'){$tag='';}
 	$tag=str_replace("|||",",",$tag);
+
+	$post_content =  get_remote_img($post_content,"/wp-content/uploads/");
 	
 	$post_name=$post_title;
 	if($translateSlug) $post_name=hm_tranlate($post_name);
@@ -56,9 +62,11 @@ elseif(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secret
 	$sql="INSERT INTO `".$table_prefix."posts` ( `post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`, `post_status`, `comment_status`, `ping_status`, `post_password`, `post_name`, `to_ping`, `pinged`, `post_modified`, `post_modified_gmt`, `post_content_filtered`, `post_parent`, `guid`, `menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES ($postAuthor, '$post_date', '$post_date', '$post_content', '$post_title','$post_excerpt', '$post_status', 'open', 'open', '', '$post_name', '', '', '$post_date', '$post_date', '$post_content_filtered', 0, '$guid', '$menu_order', 'post', '$post_mime_type', '$comment_count')";
 	$query=$DB->query($sql);
 	$postid=$DB->insert_id($sql);
+    /*
 	$tm2=$tm+10;
 	$sqledit="INSERT INTO `".$table_prefix."postmeta` (post_id ,meta_key ,meta_value ) VALUES ($postid,'_edit_lock','$tm2'),($postid,'_edit_last',1)";
 	$query2=$DB->query($sqledit);
+     */
  
     $post_category_list= array_unique(explode(",",$post_category));
 	foreach($post_category_list as $post_category)
