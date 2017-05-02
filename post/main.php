@@ -1,7 +1,7 @@
 <?php
-include "../wp-config.php"; //这里是引用原来的数据库文�?
-include "./config.php"; 
-if( !class_exists("MySql") )	require_once ("mysql-class.php");
+include "../wp-config.php"; //引入wordpress配置文件
+include "./config.php";     //引入发布配置文件
+if( !class_exists("MySql") )	require_once ("mysql-class.php"); //mysql文件
 if($pingAfterPost) require_once("../wp-includes/comment.php");
 if( !class_exists("Snoopy") )	require_once ("../wp-includes/class-snoopy.php");
 function hm_tranlate($text){
@@ -21,7 +21,7 @@ function hm_tranlate($text){
 	return $htmlret;
 }
 
-$DB = new MySql(DB_HOST, DB_USER, DB_PASSWORD,DB_NAME);//初始化数据库�?
+$DB = new MySql(DB_HOST, DB_USER, DB_PASSWORD,DB_NAME);//初始化mysql
 
 if(isset($_GET['action'])&&$_GET['action'] == "list")
 {
@@ -45,23 +45,28 @@ else if(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secre
 	extract($post);
 	if($post_title=='[标签:标题]'||$post_title==''){die('Failure: title is empty');}else{$post_title=trim($post_title);};
 	if($post_content=='[标签:内容]'||$post_content==''){die('Failure: content is empty');};
-	if($post_category =='[分类id]'|| $post_category==''){$post_category=0;};
-	if($tag=='[标签:SY_tag]'){$tag='';}
+	if($post_category =='[分类ID]'|| $post_category==''){$post_category=0;};
+	if($tag=='[系统标签:SY_tag]'){$tag='';}
 	$tag=str_replace("|||",",",$tag);
 
-	$post_content =  get_remote_img($post_content,"/wp-content/uploads/");
+    //下载远程文件
+    $wppath=dirname(__FILE__)."/../";
+	$post_content =  get_remote_img($post_content,$wppath."wp-content/uploads/");
 	
 	$post_name=$post_title;
+
 	if($translateSlug) $post_name=hm_tranlate($post_name);
 	$post_name=sanitize_title( $post_name);
 	if( strlen($post_name) < 2 ) $post_name="";
-	
-	$tm=time()+$randomPostTime+$timeZoneOffset*3600; 
-	$post_date=date("Y-m-d H:i:s",$tm);
+    //设置发布时间
+    //参数：每日发布数量，第一篇文章开始时间，每日文章的开始时间，文章时间间隔，文章时间间隔最小位移，文章时间间隔最大唯一
+	$post_date=get_post_date(10,"2001-01-01","08:00:00",1200,10,100);
+
 	$post_status=$postStatus; 
 	$sql="INSERT INTO `".$table_prefix."posts` ( `post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`, `post_status`, `comment_status`, `ping_status`, `post_password`, `post_name`, `to_ping`, `pinged`, `post_modified`, `post_modified_gmt`, `post_content_filtered`, `post_parent`, `guid`, `menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES ($postAuthor, '$post_date', '$post_date', '$post_content', '$post_title','$post_excerpt', '$post_status', 'open', 'open', '', '$post_name', '', '', '$post_date', '$post_date', '$post_content_filtered', 0, '$guid', '$menu_order', 'post', '$post_mime_type', '$comment_count')";
 	$query=$DB->query($sql);
 	$postid=$DB->insert_id($sql);
+
     /*
 	$tm2=$tm+10;
 	$sqledit="INSERT INTO `".$table_prefix."postmeta` (post_id ,meta_key ,meta_value ) VALUES ($postid,'_edit_lock','$tm2'),($postid,'_edit_last',1)";
@@ -132,7 +137,8 @@ else if(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secre
 	}
 	if($pingAfterPost)  generic_ping();
 	echo 'public success!';
+    $count = file_get_contents(dirname(__FILE__)."/count.txt");
+    file_put_contents(dirname(__FILE__)."/count.txt",$count+1);
 }else{
-	echo "Prohibited";
+	echo 'Prohibited';
 }
-?>

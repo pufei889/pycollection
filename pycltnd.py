@@ -104,10 +104,11 @@ else:
     engine = 'yahoo'
 
 
-replacere = re.compile(r"^([^\|]*)\|(.*)?$",re.I|re.S)
+replacere = re.compile(r"^([^\|]*)\|(.*?)$",re.I|re.S)
 def key_replace(content,filefd):
-    line = filefd.readline()
+    line = filefd.readline().strip().lstrip("\xef\xbb\xbf")
     while(line):
+        if not line:continue
         find = replacere.search(line).group(1).strip()
         replace = replacere.search(line).group(2).strip()
         if find:

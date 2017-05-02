@@ -1,51 +1,22 @@
 <?php
-/*    WordPress 发布接口，可以配合火车头采集器使�?
-
-      本接口是在rq204的接口上完善实现，主要增加以下功能：
-
-      1.  随机时间安排与预约发布功能： 可以设定发布时间以及启用预约发布功能
-      2. 服务器时间与博客时间的时区差异处理。这特别适合在国外服务器上的博客
-      3. 永久链接的自动翻译设置。根据标题自动翻译为英文并进行seo处理
-      4. 增加了对分类catagory的处�?
-      5. 多标签处�?多个标签可以用火车头默认的tag|||tag2|||tag3的形�?
-      6.增加了发文后ping功能
-      7.增加了“pending review”的设置
-
-    使用步骤 �?
-    1. 修改下面的发布参数，并将hm-locywp文件夹上传到服务器上Wordpress的根目录�?
-
+/*
+ * wordpress发布模块
  */
-$postStatus     = "publish"; 			//"future","publish","pending"  预约发布 立即发布 暂不发布
-$randomPostTime = 0;//rand(0,50)*rand(200,3000)*24;     //随机发布时间取�?，单位为�?。比�?2345 * rand(0,17)�?为不对时间进行随机处�?当前为一个月之内的随机发�?
-$translateSlug  = false;			//自动翻译中文url为拼�?设置为true时可能出现不可预知错�?
-$timeZoneOffset = 8;    				//服务器时区与博客时区差别，如服务器为PST(-8)，博客为CST(+8)，则�?6
-$pingAfterPost  = false;  				//建议关闭（对于大量发布的情况，开启ping会影响速度，并可能会影响收录）
-$postAuthor     = 1;    				//作者的id，默认为admin
-$secretWord     = "yht123hito"; 			//接口验证密码请不要更�?更改后将导致发布失败
-
-
-//同义词替换功�?(区分大小�?关键词库用word.txt表示)
-function strtr_words($str)
-{
-    $words=array();
-    $key_list = file("word.txt");
-    foreach($key_list as $k=>$v)
-    {
-        $str_data = explode(",",$v);//关键词分割符
-        $w1=trim($str_data[0])." ";
-        $w2=trim($str_data[1])." ";
-        $words+=array("$w1"=>"$w2","$w2"=>"$w1");
-    }
-    return strtr($str,$words);//返回结果
-}
+$postStatus     = "publish"; 			//"future","publish","pending"
+$randomPostTime = 0;                    //rand(0,50)*rand(200,3000)*24; 
+$translateSlug  = false;			    //
+$timeZoneOffset = 0;    				//
+$pingAfterPost  = false;  				//
+$postAuthor     = 1;    				//
+$secretWord     = "yht123hito"; 		//
 
 function get_remote_img($content,$imgdir){
     $tmp = stripslashes($content);
     preg_match_all("/<img.*src=.*(https?[^\"\'\s]*)/i",$tmp,$match);
     $imgarr=($match[1])?$match[1]:array();
     foreach($imgarr as $img){
-        $imgraw = file_get_contents($img);
-        usleep(100);
+        $imgraw = curl($img);
+        usleep(500);
         $subfix = substr($img,strrpos($img,"."));
         if($imgraw){
             $filename = rand().$subfix;
@@ -55,27 +26,42 @@ function get_remote_img($content,$imgdir){
     }
     return $content;
 }
-function changepostdate($maxaday,$mininterval=6000){
-    global $DB,$table_prefix;
-    $sql = "select count(id) as num from ".$table_prefix."posts where 1";
-    $res = $DB->query($sql);
-    $tmp = $DB->fetch_array($res);
-    $num = $tmp['num'];
-    $days = floor($num/$maxaday);
-    $maxinterval = floor(24*3600/$maxaday);
-    //���ڵ�ʱ���
-    $now = time();
-    $offset=0;
-    while($days>0){
-        //��ȡ��һ�����µ�������Ŀ�ʼʱ��
-        $starttime = $now-$days*3600*24;
-        $tmp = $DB->query("select id from $table_prefix"."posts where 1 order by id asc limit $offset,$maxaday");
-        while($tmp2=$DB->fetch_array($tmp)){
-            $id=$tmp2["id"];
-            $posttime =$starttime+rand($mininterval,$maxinterval);
-            $DB->query("update $table_prefix"."posts set post_date=from_unixtime($posttime),post_date_gmt=from_unixtime($posttime) ,post_modified=from_unixtime($posttime),post_modified_gmt=from_unixtime($posttime) where id=$id");
-        }
-        $days--;
-        $offset = $offset+$maxaday;
+
+function curl($url){
+    if(function_exists("curl_init")){
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_REFERER,"https://images.google.com/");
+        curl_setopt($ch,CURLOPT_TIMEOUT,5);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYHOST, FALSE);
+        $out = curl_exec($ch);
+        curl_close($ch);
+        return $out;
+    }else{
+        @ini_set('allow_url_fopen','on');
+        return file_get_contents($url);
     }
+    return false;
+}
+
+//设置文件的发布时间
+//参数：每日发布数量，第一篇文章开始时间，每日文章的开始时间，文章时间间隔，文章时间间隔最小位移，文章时间间隔最大唯一
+function get_post_date($everydaycount=10,$startdate="2001-01-01",$daystarttime="08:00:00",$interval=1200,$minoffset=10,$maxoffset=100){
+    //获取已经发布了多少文章
+    if(!file_exists(dirname(__FILE__)."/count.txt")){
+        touch(dirname(__FILE__)."/count.txt");
+    }
+    $thiscount=file_get_contents(dirname(__FILE__)."/count.txt");
+    //获取这一篇文章距开始的天数
+    $thisdate = ceil(($thiscount+1)/$everydaycount);
+    //获取这一篇文章距每天一篇的时间
+    $thistime= ($thiscount%$everydaycount)*$interval+rand($minoffset,$maxoffset);
+    //这一篇文章的位移时间
+    $seconds=($thisdate-1)*3600*24+$thistime;
+    //这一篇文章的时间戳
+    $date = date_create($startdate.' '.$daystarttime);
+    return date("Y-m-d H:i:s",date_timestamp_get($date)+$seconds);
 }
