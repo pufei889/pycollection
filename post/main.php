@@ -138,7 +138,7 @@ else if(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secre
 	if($pingAfterPost)  generic_ping();
 	echo 'public success!';
     $count = file_get_contents(dirname(__FILE__)."/count.txt");
-    file_put_contents(dirname(__FILE__)."/count.txt",$count+1);
+    file_put_contents(dirname(__FILE__)."/count.txt",$count+1,LOCK_EX);
 }else{
 	echo 'Prohibited';
 }
