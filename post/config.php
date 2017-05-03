@@ -15,7 +15,7 @@ function get_remote_img($content,$imgdir){
     preg_match_all("/<img.*src=.*(https?[^\"\'\s]*)/i",$tmp,$match);
     $imgarr=($match[1])?$match[1]:array();
     foreach($imgarr as $img){
-        $imgraw = curl($img);
+        $imgraw = pycurl($img);
         usleep(500);
         $subfix = substr($img,strrpos($img,"."));
         if($imgraw){
@@ -27,7 +27,7 @@ function get_remote_img($content,$imgdir){
     return $content;
 }
 
-function curl($url){
+function pycurl($url){
     if(function_exists("curl_init")){
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL, $url);
@@ -51,10 +51,12 @@ function curl($url){
 //参数：每日发布数量，第一篇文章开始时间，每日文章的开始时间，文章时间间隔，文章时间间隔最小位移，文章时间间隔最大唯一
 function get_post_date($everydaycount=10,$startdate="2001-01-01",$daystarttime="08:00:00",$interval=1200,$minoffset=10,$maxoffset=100){
     //获取已经发布了多少文章
-    if(!file_exists(dirname(__FILE__)."/count.txt")){
+    if(file_exists(dirname(__FILE__)."/count.txt")){
+        $thiscount=file_get_contents(dirname(__FILE__)."/count.txt");
+    }else{
         touch(dirname(__FILE__)."/count.txt");
+        $thiscount=0;
     }
-    $thiscount=file_get_contents(dirname(__FILE__)."/count.txt");
     //获取这一篇文章距开始的天数
     $thisdate = ceil(($thiscount+1)/$everydaycount);
     //获取这一篇文章距每天一篇的时间
