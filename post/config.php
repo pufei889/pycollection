@@ -10,23 +10,6 @@ $pingAfterPost  = false;  				//
 $postAuthor     = 1;    				//
 $secretWord     = "yht123hito"; 		//
 
-function get_remote_img($content,$imgdir){
-    $tmp = stripslashes($content);
-    preg_match_all("/<img.*src=.*(https?[^\"\'\s]*)/i",$tmp,$match);
-    $imgarr=($match[1])?$match[1]:array();
-    foreach($imgarr as $img){
-        $imgraw = pycurl($img);
-        usleep(500);
-        $subfix = substr($img,strrpos($img,"."));
-        if($imgraw){
-            $filename = rand().$subfix;
-            file_put_contents(dirname(__FILE__)."/..".$imgdir."/".$filename,$imgraw);
-            $content = str_replace($img,"$imgdir$filename",$content);
-        }
-    }
-    return $content;
-}
-
 function pycurl($url){
     if(function_exists("curl_init")){
         $ch = curl_init();
@@ -47,16 +30,33 @@ function pycurl($url){
     return false;
 }
 
+function get_remote_img($content,$imgdir){
+    $tmp = stripslashes($content);
+    preg_match_all("/<img.*src=.*(https?[^\"\'\s]*)/i",$tmp,$match);
+    $imgarr=($match[1])?$match[1]:array();
+    foreach($imgarr as $img){
+        $imgraw = pycurl($img);
+        usleep(500);
+        $subfix = substr($img,strrpos($img,"."));
+        if($imgraw){
+            $filename = rand().$subfix;
+            file_put_contents(dirname(__FILE__)."/..".$imgdir."/".$filename,$imgraw);
+            $content = str_replace($img,"$imgdir$filename",$content);
+        }
+    }
+    return $content;
+}
+
 //设置文件的发布时间
 //参数：每日发布数量，第一篇文章开始时间，每日文章的开始时间，文章时间间隔，文章时间间隔最小位移，文章时间间隔最大唯一
 function get_post_date($everydaycount=10,$startdate="2001-01-01",$daystarttime="08:00:00",$interval=1200,$minoffset=10,$maxoffset=100){
     //获取已经发布了多少文章
-    if(file_exists(dirname(__FILE__)."/count.txt")){
-        $thiscount=file_get_contents(dirname(__FILE__)."/count.txt");
-    }else{
-        touch(dirname(__FILE__)."/count.txt");
-        $thiscount=0;
+    if(!file_exists(dirname(__FILE__)."/count.txt")){
+        if(!touch(dirname(__FILE__)."/count.txt")){
+            die("Publish Failure, Can Not Create A State File, Please Change the Permission of Post Directory");
+        }
     }
+    $thiscount=file_get_contents(dirname(__FILE__)."/count.txt");
     //获取这一篇文章距开始的天数
     $thisdate = ceil(($thiscount+1)/$everydaycount);
     //获取这一篇文章距每天一篇的时间

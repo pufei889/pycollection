@@ -51,7 +51,7 @@ else if(isset($_GET['action'])&&$_GET['action'] == "save" /*&&isset($_GET['secre
 
     //下载远程文件
     $wppath=dirname(__FILE__)."/../";
-	$post_content =  get_remote_img($post_content,$wppath."wp-content/uploads/");
+	$post_content =  get_remote_img($post_content,"/wp-content/uploads/");
 	
 	$post_name=$post_title;
 
